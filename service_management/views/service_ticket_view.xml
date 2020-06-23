@@ -1,0 +1,172 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+	<data>
+    <record id="service_order_form" model="ir.ui.view">
+        <field name="name">service.order.form</field>
+        <field name="model">service.order</field>
+        <field name="arch" type="xml">
+            <form string="Service Order">
+                <header>
+                    <!-- <button name="send" string="Send Now" type="object" states='outgoing' class="oe_highlight"/>
+                    <button name="cancel" string="Cancel" type="object" states='outgoing'/>
+                    <field name="state" widget="statusbar"/> -->
+                </header>
+                <sheet>
+                    <group>
+                        <field name="company_id"/>
+                    </group>
+                    <group>
+                        <group string="Call Info">
+                            <field name="name"/>
+                            <field name="call_date"/>
+                            <field name="call_type"/>
+                            <field name="status"/>
+                            <field name="sub_status"/>
+                        </group>
+                        <group string="Product Info">
+                            <field name="serial_no"/>
+                            <field name="product_id"/>
+                            <field name="product_no"/>
+                            <field name="ptav_product_variant_ids" widget="many2many_tags" domain="[('product_tmpl_id','=',product_id)]"/>
+                        </group>
+                        <group string="Customer Info">
+                            <field name="customer_id"/>
+                            <field name="customer_type"/>
+                            <field name="mobile"/>
+                            <field name="email"/>
+                            <field name="address"/>
+                        </group>
+                        <group string="Warranty Info">
+                            <field name="purchase_date"/>
+                            <field name="proof_of_purchase"/>
+                            <field name="war_in_months"/>
+                            <field name="war_balance"/>
+                            <field name="war_status"/>
+                            <field name="amc_status"/>
+                        </group>
+                        <group string="Assigning Info">
+                        	<field name="zone"/>
+                        	<field name="state_id"/>
+                        	<field name="rm"/>
+                        	<field name="engineer_id"/>
+                        	<field name="partner_group_id"/>
+                        	<field name="partner_name_id"/>
+                        </group>
+                        <group string="Problem Info">
+                        	<field name="problem_code"/>
+                        	<field name="problem_desc"/>
+                        	<separator string="Closure Info"/>
+                        	<field name="closed_date"/>
+                        	<field name="closure_desc"/>
+                        </group>
+                    </group>
+                    <notebook>
+                    	<page string="Customer Wise Call History" name="customer_call_history">
+                    		<field name="call_history_ids">
+                    			<tree editable="bottom">
+                    				<field name="customer_id"/>
+                    				<field name="name"/>
+                    				<field name="call_tkt_no"/>
+                    				<field name="product"/>
+                    				<field name="serial_no"/>
+                    				<field name="prob_code"/>
+                    				<field name="action_code"/>
+                    				<field name="status"/>
+                    			</tree>
+                    		</field>
+                    	</page>
+                    	<page string="Serial Wise Call History" name="serial_call_history">
+                    		<field name="serial_history_ids">
+                    			<tree editable="bottom">
+                    				<field name="customer_id"/>
+                    				<field name="name"/>
+                    				<field name="call_tkt_no"/>
+                    				<field name="product"/>
+                    				<field name="serial_no"/>
+                    				<field name="prob_code"/>
+                    				<field name="action_code"/>
+                    				<field name="status"/>
+                    			</tree>
+                    		</field>
+                    	</page>
+                    	<page string="Activity" name="activity_details">
+                    		<field name="activity_ids">
+                    			<tree editable="bottom">
+                    				<field name="name"/>
+                    				<field name="time" widget="float_time"/>
+                    				<field name="engineer_id"/>
+                    				<field name="action_code"/>
+                    				<field name="action_desc"/>
+                    				<field name="status"/>
+                    			</tree>
+                    		</field>
+                    	</page>
+                    	<page string="Spares Info" name="spares_history">
+                    		<field name="spares_details_ids">
+                    			<tree editable="bottom">
+                    				<field name="item_no"  width="150px"/>
+                    				<field name="name"/>
+                    				<field name="serial_no" width="150px"/>
+                    				<field name="billable" width="150px"/>
+                    				<field name="war_in_months" width="200px"/>
+                    			</tree>
+                    		</field>
+                    	</page>
+                    	<page string="SLA Info" name="sla_info">
+                    		<field name="sla_details_ids">
+                    			<tree editable="bottom">
+                    				<field name="name"  width="150px"/>
+                    				<field name="customer_loc"  width="200px"/>
+                    				<field name="tat_in_hours" widget="float_time"  width="150px"/>
+                    				<field name="tat_achieved" string="TAT Achieved(Hr)" widget="float_time"  width="200px"/>
+                    				<field name="sla_met"  width="150px"/>
+                    			</tree>
+                    		</field>
+                    	</page>
+                    </notebook>
+                </sheet>
+            </form>
+        </field>
+    </record>
+    
+    <record id="service_order_tree" model="ir.ui.view">
+        <field name="name">service.order.tree</field>
+        <field name="model">service.order</field>
+        <field name="arch" type="xml">
+            <tree string="Service Order">
+                <field name="name"/>
+            </tree>
+        </field>
+    </record>
+
+   <!--  <record id="sms_sms_view_search" model="ir.ui.view">
+        <field name="name">sms.sms.view.search</field>
+        <field name="model">sms.sms</field>
+        <field name="arch" type="xml">
+            <search string="Search SMS Templates">
+                <field name="number"/>
+                <field name="partner_id"/>
+            </search>
+        </field>
+    </record> -->
+
+    <record id="service_order_action" model="ir.actions.act_window">
+        <field name="name">Service Order</field>
+        <field name="res_model">service.order</field>
+        <field name="view_mode">tree,form</field>
+    </record>
+
+    <menuitem id="service_menu_root" name="Service Management"
+        sequence="1"/>
+        
+     <menuitem id="service_menu"
+     	name="Service Management"
+        parent="service_menu_root"
+        sequence="1"/>
+        
+     <menuitem id="service_order_menu"
+        parent="service_menu"
+        action="service_order_action"
+        sequence="1"/>
+	</data>
+</odoo>
