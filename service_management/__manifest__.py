@@ -10,6 +10,7 @@
     'version': '1.1',
     'depends': ['base', 'product'],
     'data': [
+        'data/ir_sequence_data.xml',
         'security/ir.model.access.csv',
         'views/service_ticket_view.xml',
     ],

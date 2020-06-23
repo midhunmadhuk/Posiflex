@@ -73,8 +73,8 @@ class ServiceOrder(models.Model):
     _rec_name = 'name'
     _order = 'id DESC'
     
-    name = fields.Char('Call Ticket No.')
-    company_id =  fields.Many2one('res.company', 'Company')
+    name = fields.Char('Call Ticket No.', copy=False, default=lambda self: self.env['ir.sequence'].next_by_code('service.order'))
+    company_id =  fields.Many2one('res.company', 'Company',default=lambda self: self.env.user.company_id)
     call_date = fields.Datetime('Call Date')
     call_type = fields.Char('Call Type')
     status = fields.Char('Status')
@@ -109,9 +109,6 @@ class ServiceOrder(models.Model):
     activity_ids = fields.One2many('activity.details', 'service_id', string='Activities')
     spares_details_ids = fields.One2many('spares.details', 'service_id', string='Spares Info')
     sla_details_ids = fields.One2many('sla.details', 'service_id', string='SLA Info')
-    
-
-    
     
     
     
