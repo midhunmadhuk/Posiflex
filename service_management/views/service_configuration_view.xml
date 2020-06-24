@@ -1,0 +1,436 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+	<data>
+	
+		<!--Activity Type  -->
+		
+		<record id="activity_type_form" model="ir.ui.view">
+	        <field name="name">activity.type.form</field>
+	        <field name="model">activity.type</field>
+	        <field name="arch" type="xml">
+	            <form string="Activity Type">
+	            	<sheet>
+	                    <group>
+	                        <field name="name"/>
+	                    </group>
+	                </sheet>
+	            </form>
+	        </field>
+        </record>
+        
+        <record id="activity_type_tree" model="ir.ui.view">
+	        <field name="name">activity.type.tree</field>
+	        <field name="model">activity.type</field>
+	        <field name="arch" type="xml">
+	            <tree string="Activity Type">
+	                <field name="name"/>
+	            </tree>
+	        </field>
+    	</record>
+    	
+    	<record id="activity_type_action" model="ir.actions.act_window">
+	        <field name="name">Activity Type</field>
+	        <field name="res_model">activity.type</field>
+	        <field name="view_mode">tree,form</field>
+    	</record>
+    	
+    	<!--Call Type  -->
+		<record id="call_type_form" model="ir.ui.view">
+	        <field name="name">call.type.form</field>
+	        <field name="model">call.type</field>
+	        <field name="arch" type="xml">
+	            <form string="Call Type">
+	            	<sheet>
+	                    <group>
+	                        <field name="name"/>
+	                    </group>
+	                </sheet>
+	            </form>
+	        </field>
+        </record>
+        
+        <record id="call_type_tree" model="ir.ui.view">
+	        <field name="name">call.type.tree</field>
+	        <field name="model">call.type</field>
+	        <field name="arch" type="xml">
+	            <tree string="Call Type">
+	                <field name="name"/>
+	            </tree>
+	        </field>
+    	</record>
+    	
+    	<record id="call_type_action" model="ir.actions.act_window">
+	        <field name="name">Call Type</field>
+	        <field name="res_model">call.type</field>
+	        <field name="view_mode">tree,form</field>
+    	</record>
+    	
+    	<!-- StatusInfo  -->
+    	
+    	<record id="status_info_form" model="ir.ui.view">
+	        <field name="name">status.info.form</field>
+	        <field name="model">status.info</field>
+	        <field name="arch" type="xml">
+	            <form string="Status Info">
+	            	<sheet>
+	                    <group>
+	                        <field name="name"/>
+	                    </group>
+	                </sheet>
+	            </form>
+	        </field>
+        </record>
+        
+        <record id="status_info_tree" model="ir.ui.view">
+	        <field name="name">status.info.tree</field>
+	        <field name="model">status.info</field>
+	        <field name="arch" type="xml">
+	            <tree string="Status Info">
+	                <field name="name"/>
+	            </tree>
+	        </field>
+    	</record>
+    	
+    	<record id="status_info_action" model="ir.actions.act_window">
+	        <field name="name">Status Info</field>
+	        <field name="res_model">status.info</field>
+	        <field name="view_mode">tree,form</field>
+    	</record>
+    	
+    	<!--Sub Status Info  -->
+    	<record id="sub_status_info_form" model="ir.ui.view">
+	        <field name="name">sub.status.info.form</field>
+	        <field name="model">sub.status.info</field>
+	        <field name="arch" type="xml">
+	            <form string="Sub Status Info">
+	            	<sheet>
+	                    <group>
+	                        <field name="name"/>
+	                        <field name="status_id"/>
+	                    </group>
+	                </sheet>
+	            </form>
+	        </field>
+        </record>
+        
+        <record id="sub_status_info_tree" model="ir.ui.view">
+	        <field name="name">sub.status.info.tree</field>
+	        <field name="model">sub.status.info</field>
+	        <field name="arch" type="xml">
+	            <tree string="Sub Status Info">
+	                <field name="name"/>
+	                <field name="status_id"/>
+	            </tree>
+	        </field>
+    	</record>
+    	
+    	<record id="sub_status_info_action" model="ir.actions.act_window">
+	        <field name="name">Sub Status Info</field>
+	        <field name="res_model">sub.status.info</field>
+	        <field name="view_mode">tree,form</field>
+    	</record>
+    	
+    	<!--Partner Level  -->
+    	
+    	<record id="partner_level_form" model="ir.ui.view">
+	        <field name="name">partner.level.form</field>
+	        <field name="model">partner.level</field>
+	        <field name="arch" type="xml">
+	            <form string="Partner Level">
+	            	<sheet>
+	                    <group>
+	                        <field name="name"/>
+	                    </group>
+	                </sheet>
+	            </form>
+	        </field>
+        </record>
+        
+        <record id="partner_level_tree" model="ir.ui.view">
+	        <field name="name">partner.level.tree</field>
+	        <field name="model">partner.level</field>
+	        <field name="arch" type="xml">
+	            <tree string="Partner Level">
+	                <field name="name"/>
+	            </tree>
+	        </field>
+    	</record>
+    	
+    	<record id="partner_level_action" model="ir.actions.act_window">
+	        <field name="name">Partner Level</field>
+	        <field name="res_model">partner.level</field>
+	        <field name="view_mode">tree,form</field>
+    	</record>
+    	
+    	<!--Partner Type  -->
+    	
+    	<record id="partner_type_form" model="ir.ui.view">
+	        <field name="name">partner.type.form</field>
+	        <field name="model">partner.type</field>
+	        <field name="arch" type="xml">
+	            <form string="Partner Type">
+	            	<sheet>
+	                    <group>
+	                        <field name="name"/>
+	                        <field name="partner_level_id"/>
+	                    </group>
+	                </sheet>
+	            </form>
+	        </field>
+        </record>
+        
+        <record id="partner_type_tree" model="ir.ui.view">
+	        <field name="name">partner.type.tree</field>
+	        <field name="model">partner.type</field>
+	        <field name="arch" type="xml">
+	            <tree string="Partner Level">
+	                <field name="name"/>
+	                <field name="partner_level_id"/>
+	            </tree>
+	        </field>
+    	</record>
+    	
+    	<record id="partner_type_action" model="ir.actions.act_window">
+	        <field name="name">Partner Type</field>
+	        <field name="res_model">partner.type</field>
+	        <field name="view_mode">tree,form</field>
+    	</record>
+    	
+    	<!--Customer Type  -->
+    	
+    	<record id="customer_type_form" model="ir.ui.view">
+	        <field name="name">customer.type.form</field>
+	        <field name="model">customer.type</field>
+	        <field name="arch" type="xml">
+	            <form string="Customer Type">
+	            	<sheet>
+	                    <group>
+	                        <field name="name"/>
+	                    </group>
+	                </sheet>
+	            </form>
+	        </field>
+        </record>
+        
+        <record id="customer_type_tree" model="ir.ui.view">
+	        <field name="name">customer.type.tree</field>
+	        <field name="model">customer.type</field>
+	        <field name="arch" type="xml">
+	            <tree string="Customer Type">
+	                <field name="name"/>
+	            </tree>
+	        </field>
+    	</record>
+    	
+    	<record id="customer_type_action" model="ir.actions.act_window">
+	        <field name="name">Customer Type</field>
+	        <field name="res_model">customer.type</field>
+	        <field name="view_mode">tree,form</field>
+    	</record>
+    	
+    	<!--Warranty Type  -->
+    	
+    	<record id="warranty_type_form" model="ir.ui.view">
+	        <field name="name">warranty.type.form</field>
+	        <field name="model">warranty.type</field>
+	        <field name="arch" type="xml">
+	            <form string="Warranty Type">
+	            	<sheet>
+	                    <group>
+	                        <field name="name"/>
+	                    </group>
+	                </sheet>
+	            </form>
+	        </field>
+        </record>
+        
+        <record id="warranty_type_tree" model="ir.ui.view">
+	        <field name="name">warranty.type.tree</field>
+	        <field name="model">warranty.type</field>
+	        <field name="arch" type="xml">
+	            <tree string="Warranty Type">
+	                <field name="name"/>
+	            </tree>
+	        </field>
+    	</record>
+    	
+    	<record id="warranty_type_action" model="ir.actions.act_window">
+	        <field name="name">Warranty Type</field>
+	        <field name="res_model">warranty.type</field>
+	        <field name="view_mode">tree,form</field>
+    	</record>
+    	
+    	<!--Problem Code  -->
+    	
+    	<record id="problem_code_form" model="ir.ui.view">
+	        <field name="name">problem.code.form</field>
+	        <field name="model">problem.code</field>
+	        <field name="arch" type="xml">
+	            <form string="Problem Code">
+	            	<sheet>
+	                    <group>
+	                        <field name="name"/>
+	                    </group>
+	                </sheet>
+	            </form>
+	        </field>
+        </record>
+        
+        <record id="problem_code_tree" model="ir.ui.view">
+	        <field name="name">problem.code.tree</field>
+	        <field name="model">problem.code</field>
+	        <field name="arch" type="xml">
+	            <tree string="Problem Code">
+	                <field name="name"/>
+	            </tree>
+	        </field>
+    	</record>
+    	
+    	<record id="problem_code_action" model="ir.actions.act_window">
+	        <field name="name">Problem Code</field>
+	        <field name="res_model">problem.code</field>
+	        <field name="view_mode">tree,form</field>
+    	</record>
+    	
+    	<!--Action Code  -->
+    	
+    	<record id="action_code_form" model="ir.ui.view">
+	        <field name="name">action.code.form</field>
+	        <field name="model">action.code</field>
+	        <field name="arch" type="xml">
+	            <form string="Action Code">
+	            	<sheet>
+	                    <group>
+	                        <field name="name"/>
+	                    </group>
+	                </sheet>
+	            </form>
+	        </field>
+        </record>
+        
+        <record id="action_code_tree" model="ir.ui.view">
+	        <field name="name">action.code.tree</field>
+	        <field name="model">action.code</field>
+	        <field name="arch" type="xml">
+	            <tree string="Action Code">
+	                <field name="name"/>
+	            </tree>
+	        </field>
+    	</record>
+    	
+    	<record id="action_code_action" model="ir.actions.act_window">
+	        <field name="name">Action Code</field>
+	        <field name="res_model">action.code</field>
+	        <field name="view_mode">tree,form</field>
+    	</record>
+    	
+    	<!--Serial Master  -->
+    	<record id="serial_no_master_form" model="ir.ui.view">
+	        <field name="name">serial.no.master.form</field>
+	        <field name="model">serial.no.master</field>
+	        <field name="arch" type="xml">
+	            <form string="Serial Master">
+	            	<sheet>
+	                    <group>
+	                        <group>
+	                        	<field name="name"/>
+	                        	<field name="war_latest"/>
+	                        	<field name="war_start_dt"/>
+	                        	<field name="war_balance"/>
+	                        </group>
+	                        <group>
+	                        	<field name="product_id"/>
+	                        	<field name="war_in_months"/>
+	                        	<field name="war_end_dt"/>
+	                        	<field name="war_status"/>
+	                        </group>
+	                    </group>
+	                </sheet>
+	            </form>
+	        </field>
+        </record>
+        
+        <record id="serial_no_master_tree" model="ir.ui.view">
+	        <field name="name">serial.no.master.tree</field>
+	        <field name="model">serial.no.master</field>
+	        <field name="arch" type="xml">
+	            <tree string="Serial Master">
+	                <field name="name"/>
+	            </tree>
+	        </field>
+    	</record>
+    	
+    	<record id="serial_no_master_action" model="ir.actions.act_window">
+	        <field name="name">Serial Master</field>
+	        <field name="res_model">serial.no.master</field>
+	        <field name="view_mode">tree,form</field>
+    	</record>
+    	
+    	
+    	<!--Menu  -->
+    	
+    	<menuitem id="config_menu"
+	     	name="Configuration"
+	        parent="service_menu_root"
+	        sequence="1"/>
+	        
+	     <menuitem id="call_type_menu"
+	        parent="config_menu"
+	        action="call_type_action"
+	        sequence="1"/>
+	        
+	     <menuitem id="status_info_menu"
+	        parent="config_menu"
+	        action="status_info_action"
+	        sequence="2"/>
+	        
+	      <menuitem id="sub_status_info_menu"
+	        parent="config_menu"
+	        action="sub_status_info_action"
+	        sequence="3"/>
+	        
+	      <menuitem id="partner_level_menu"
+	        parent="config_menu"
+	        action="partner_level_action"
+	        sequence="4"/>
+	        
+	       <menuitem id="partner_type_menu"
+	        parent="config_menu"
+	        action="partner_type_action"
+	        sequence="5"/>
+	        
+	       <menuitem id="customer_type_menu"
+	        parent="config_menu"
+	        action="customer_type_action"
+	        sequence="6"/>
+	        
+	       <menuitem id="warranty_type_menu"
+	        parent="config_menu"
+	        action="warranty_type_action"
+	        sequence="6"/>
+	        
+	        <menuitem id="problem_code_menu"
+	        parent="config_menu"
+	        action="problem_code_action"
+	        sequence="7"/>
+	        
+	        <menuitem id="action_code_menu"
+	        parent="config_menu"
+	        action="action_code_action"
+	        sequence="8"/>
+	        
+	        <menuitem id="activity_type_menu"
+	        parent="config_menu"
+	        action="activity_type_action"
+	        sequence="9"/>
+	        
+	        <menuitem id="serial_master_menu"
+	        parent="config_menu"
+	        action="serial_no_master_action"
+	        sequence="10"/>
+	        
+	        
+	       
+        
+	</data>
+</odoo>

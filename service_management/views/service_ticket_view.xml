@@ -19,14 +19,16 @@
                         <group string="Call Info">
                             <field name="name" readonly="1"/>
                             <field name="call_date"/>
+                            <field name="call_date_time" readonly="1"/>
                             <field name="call_type"/>
                             <field name="status"/>
-                            <field name="sub_status"/>
+                            <field name="sub_status" domain="[('status_id','=',status)]"/>
                         </group>
                         <group string="Product Info">
                             <field name="serial_no"/>
-                            <field name="product_id"/>
+                            <field name="product_categ_id"/>
                             <field name="product_no"/>
+                            <field name="product_id"/>
                             <field name="ptav_product_variant_ids" widget="many2many_tags" domain="[('product_tmpl_id','=',product_id)]"/>
                         </group>
                         <group string="Customer Info">
@@ -39,23 +41,29 @@
                         <group string="Warranty Info">
                             <field name="purchase_date"/>
                             <field name="proof_of_purchase"/>
+                            <field name="proof_of_purchase_avl"/>
+                            <field name="war_latest_id"/>
                             <field name="war_in_months"/>
-                            <field name="war_balance"/>
+                            <field name="war_start_date"/>
+                            <field name="war_end_date"/>
                             <field name="war_status"/>
-                            <field name="amc_status"/>
                         </group>
                         <group string="Assigning Info">
                         	<field name="zone"/>
                         	<field name="state_id"/>
-                        	<field name="rm"/>
+                        	<field name="city"/>
+                        	<field name="service_gm"/>
+                        	<field name="service_rm"/>
                         	<field name="engineer_id"/>
-                        	<field name="partner_group_id"/>
+                        	<field name="partner_type_id"/>
                         	<field name="partner_name_id"/>
                         </group>
                         <group string="Problem Info">
                         	<field name="problem_code"/>
                         	<field name="problem_desc"/>
+                        	<field name="call_remarks"/>
                         	<separator string="Closure Info"/>
+                        	<field name="resolved_date"/>
                         	<field name="closed_date"/>
                         	<field name="closure_desc"/>
                         </group>
@@ -69,9 +77,9 @@
                     				<field name="call_tkt_no"/>
                     				<field name="product"/>
                     				<field name="serial_no"/>
-                    				<field name="prob_code"/>
-                    				<field name="action_code"/>
-                    				<field name="status"/>
+                    				<field name="prob_code_id"/>
+                    				<field name="action_code_id"/>
+                    				<field name="status_id"/>
                     			</tree>
                     		</field>
                     	</page>
@@ -83,9 +91,9 @@
                     				<field name="call_tkt_no"/>
                     				<field name="product"/>
                     				<field name="serial_no"/>
-                    				<field name="prob_code"/>
-                    				<field name="action_code"/>
-                    				<field name="status"/>
+                    				<field name="prob_code_id"/>
+                    				<field name="action_code_id"/>
+                    				<field name="status_id"/>
                     			</tree>
                     		</field>
                     	</page>
@@ -95,9 +103,12 @@
                     				<field name="name"/>
                     				<field name="time" widget="float_time"/>
                     				<field name="engineer_id"/>
+                    				<field name="partner_id"/>
                     				<field name="action_code"/>
                     				<field name="action_desc"/>
-                    				<field name="status"/>
+                    				<field name="action_remarks"/>
+                    				<field name="status_id"/>
+                    				<field name="sub_status_id"/>
                     			</tree>
                     		</field>
                     	</page>
@@ -155,7 +166,57 @@
         <field name="res_model">service.order</field>
         <field name="view_mode">tree,form</field>
     </record>
-
+    
+    <!--Serial History  -->
+    
+    <record id="serial_history_form" model="ir.ui.view">
+        <field name="name">serial.history.form</field>
+        <field name="model">serial.history</field>
+        <field name="arch" type="xml">
+            <form string="Serial History" create="false" edit="false">
+                <header>
+                </header>
+                <sheet>
+                	<group>
+                		<group>
+                			<field name="name"/>
+                			<field name="service_id"/>
+                			<field name="war_start_dt"/>
+                			<field name="war_in_months"/>
+                			<field name="war_status_id"/>
+                		</group>
+                		<group>
+                			<field name="product_id"/>
+                			<field name="war_latest"/>
+                			<field name="war_end_dt"/>
+                			<field name="war_balance"/>
+                		</group>
+                	</group>
+    			</sheet>
+    		</form>
+    	</field>
+    </record>
+    
+    <record id="serial_history_tree" model="ir.ui.view">
+        <field name="name">serial.history.tree</field>
+        <field name="model">serial.history</field>
+        <field name="arch" type="xml">
+            <tree string="Serial History" create="false" edit="false">
+                <field name="name"/>
+                <field name="service_id"/>
+                <field name="war_status_id"/>
+                <field name="war_in_months"/>
+            </tree>
+        </field>
+    </record>
+    
+     <record id="serial_history_action" model="ir.actions.act_window">
+        <field name="name">Serial No. History</field>
+        <field name="res_model">serial.history</field>
+        <field name="view_mode">tree,form</field>
+    </record>
+    
+	<!--Menu Config  -->
     <menuitem id="service_menu_root" name="Service Management"
         sequence="1"/>
         
@@ -168,5 +229,10 @@
         parent="service_menu"
         action="service_order_action"
         sequence="1"/>
+        
+     <menuitem id="serial_history_menu"
+        parent="service_menu"
+        action="serial_history_action"
+        sequence="2"/>
 	</data>
 </odoo>
