@@ -335,12 +335,15 @@
 	                        <group>
 	                        	<field name="name"/>
 	                        	<field name="war_latest"/>
+	                        	<field name="avail_entity_type"/>
 	                        	<field name="war_start_dt"/>
 	                        	<field name="war_balance"/>
 	                        </group>
 	                        <group>
 	                        	<field name="product_id"/>
 	                        	<field name="war_in_months"/>
+	                        	<field name="partner_id" attrs="{'invisible': [('avail_entity_type', '!=', 'partner')]}"/>
+	                        	<field name="customer_id" attrs="{'invisible': [('avail_entity_type', '!=', 'customer')]}"/>
 	                        	<field name="war_end_dt"/>
 	                        	<field name="war_status"/>
 	                        </group>

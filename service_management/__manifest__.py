@@ -7,13 +7,14 @@
     Includes Features for service management
     """,
     'category': 'Sales',
-    'version': '1.1.2',
+    'version': '1.1.3',
     'depends': ['base', 'product', 'hr'],
     'data': [
         'data/ir_sequence_data.xml',
         'security/ir.model.access.csv',
-        'views/service_configuration_view.xml',
         'views/service_ticket_view.xml',
+        'views/service_configuration_view.xml',
+        'views/res_partner_view.xml'
     ],
     'demo': [
     ],

@@ -61,6 +61,9 @@ class SerialNoMaster(models.Model):
     
     name = fields.Char('Serial No.')
     product_id = fields.Many2one('product.template', 'Product')
+    avail_entity_type = fields.Selection([('partner', 'Partner'), ('customer', 'Customer')], string="Available Entity Type")
+    partner_id = fields.Many2one('res.partner', 'Partner')
+    customer_id = fields.Many2one('res.partner', 'Customer')
     war_latest = fields.Many2one('warranty.type', 'WAR Latest')
     war_in_months = fields.Float('WAR In Months')
     war_start_dt = fields.Datetime('WAR Start Date')
