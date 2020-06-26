@@ -1,0 +1,5 @@
+<odoo>
+	<data>
+		<report id="call_summary_report_xlsx" model="call.summary" string="Call Summary Report" report_type="xlsx" name="service_management.call_summary_report" file="call_summary_report" attachment_use="False"/>
+	</data>
+</odoo>

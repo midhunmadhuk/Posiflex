@@ -141,8 +141,8 @@ class ServiceOrder(models.Model):
     call_date = fields.Datetime('Call Received Date')
     call_date_time = fields.Datetime('Call Created Date',default=lambda self: fields.Datetime.now())
     call_type = fields.Many2one('call.type', 'Call Type')
-    status = fields.Many2one('status.info', 'Status')
-    sub_status = fields.Many2one('sub.status.info', 'Sub Status')
+    status = fields.Many2one('status.info', compute='_check_last_activity', string='Status')
+    sub_status = fields.Many2one('sub.status.info', compute='_check_last_activity',  string='Sub Status')
     customer_ref_no = fields.Char('Customer Ref No.')
     serial_no = fields.Many2one('serial.no.master', 'Serial No.')
     product_id = fields.Many2one('product.template','Product')
@@ -194,12 +194,15 @@ class ServiceOrder(models.Model):
     def _check_last_activity(self):
         for service in self:
             if service.activity_ids:
-                print ("service.activity_ids",service.activity_ids)
                 activity_recs = service.activity_ids
                 service.last_activity_id = activity_recs[-1]
+                service.status = activity_recs[-1].status_id
+                service.sub_status = activity_recs[-1].sub_status_id
             else:
                 service.last_activity_id = False
-        
+                service.status = False
+                service.sub_status = False
+                
     
 class SerialHistory(models.Model):
     _name = 'serial.history'

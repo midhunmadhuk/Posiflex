@@ -375,7 +375,7 @@
     	<menuitem id="config_menu"
 	     	name="Configuration"
 	        parent="service_menu_root"
-	        sequence="1"/>
+	        sequence="4"/>
 	        
 	     <menuitem id="call_type_menu"
 	        parent="config_menu"

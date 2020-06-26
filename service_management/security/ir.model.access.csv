@@ -2,7 +2,7 @@ id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
 access_service_order_all,access.service.order.all,model_service_order,,1,1,1,1
 access_call_history_all,access.call.history.all,model_call_wise_history,,1,1,1,1
 access_serial_history_all,access.serial.history.all,model_serial_wise_history,,1,1,1,1
-access_activity_details_allaccess_activity_details_all,access.activity.details.all,model_activity_details,,1,1,1,1
+access_activity_details_alll,access.activity.details.all,model_activity_details,,1,1,1,1
 access_spares_details_all,access.spares.details.all,model_spares_details,,1,1,1,1
 access_sla_details_all,access.sla.details.all,model_sla_details,,1,1,1,1
 access_call_type_all,access.call.type,model_call_type,,1,1,1,1
@@ -17,3 +17,6 @@ access_action_code_all,access_action_code,model_action_code,,1,1,1,1
 access_activity_type_all,access_activity_type,model_activity_type,,1,1,1,1
 access_serial_no_master_all,access_serial_no_master,model_serial_no_master,,1,1,1,1
 access_serial_no_history_all,access_serial_no_history,model_serial_history,,1,1,1,1
+access_purchase_database_all,access_purchase_database,model_purchase_database,,1,1,1,1
+access_sales_database_all,access_sales_database,model_sales_database,,1,1,1,1
+access_amc_database_all,access_amc_database,model_amc_database,,1,1,1,1

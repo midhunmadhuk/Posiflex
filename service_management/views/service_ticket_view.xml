@@ -155,7 +155,7 @@
         <field name="name">service.order.tree</field>
         <field name="model">service.order</field>
         <field name="arch" type="xml">
-            <tree string="Service Order">
+            <tree string="Service Order" multi_edit="1">
                 <field name="name" string="Call Ticket No."/>
                 <field name="call_date_time" string="Call Created Date"/>
                 <field name="serial_no" string="Serial No."/>
@@ -254,6 +254,17 @@
         parent="service_menu"
         action="service_order_action"
         sequence="1"/>
+        
+     <menuitem id="service_db_menu"
+     	name="Serial No. Databases"
+        parent="service_menu_root"
+        sequence="2"/>
+        
+        
+     <menuitem id="service_reports_menu"
+     	name="Service Reports"
+        parent="service_menu_root"
+        sequence="3"/>
         
      <menuitem id="serial_history_menu"
         parent="service_menu"

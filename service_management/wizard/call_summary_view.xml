@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+    <record id="call_summary_report_view" model="ir.ui.view">
+        <field name="name">Call Summary</field>
+        <field name="model">call.summary</field>
+        <field name="arch" type="xml">
+           <form string="Call Summary">
+                <group>
+                    <group>
+                        <field name="from_date" string="Date From"></field>
+                        
+                    </group>
+                    <group>
+                        <field name="to_date" string="Date To"></field>
+                    </group>
+                </group>
+	            <footer>
+	                 <button string="Print" name="print_collection_report" type="object"  class="btn-primary"/>
+	                 <button string="Cancel" class="btn-default" special="cancel"/>
+	             </footer>
+           </form>
+        </field>
+    </record>
+    
+    <record id="action_call_summary_report" model="ir.actions.act_window">
+        <field name="name">Call Summary Report</field>
+        <field name="res_model">call.summary</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="view_mode">form</field>
+        <field name="view_id" ref="call_summary_report_view"/>
+        <field name="target">new</field>
+    </record>
+    
+    <menuitem id="call_summary_report_menu" name="Call Summary Report" action="action_call_summary_report" parent="service_management.service_reports_menu"></menuitem>
+    
+    </data>
+</odoo>

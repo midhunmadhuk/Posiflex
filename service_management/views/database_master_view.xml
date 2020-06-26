@@ -1,0 +1,188 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+	<data>
+		<record id="purchase_db_form" model="ir.ui.view">
+	        <field name="name">purchase.database.form</field>
+	        <field name="model">purchase.database</field>
+	        <field name="arch" type="xml">
+	            <form string="Purchase Database">
+	                <sheet>
+	                	<group>
+	                		<group>
+	                			<field name="name"/>
+	                			<field name="war_in_months"/>
+	                			<field name="war_start_dt"/>
+	                			<field name="war_end_dt"/>
+	                			<field name="from_entity_type"/>
+	                			<field name="to_entity_type"/>
+	                			<field name="reference_id"/>
+	                			<field name="reference_date"/>
+	                			<field name="inv_trans_name"/>
+	                			<field name="inv_trans_id"/>
+		                    </group>
+		                    <group>
+		                    	<field name="product_id"/>
+		                    	<field name="product_code"/>
+		                    	<field name="product_desc"/>
+		                    	<field name="product_variant_id"/>
+		                    	<field name="partner_id_1" attrs="{'invisible': [('from_entity_type', '!=', 'vendor')]}"/>
+		                    	<field name="partner_id_2" attrs="{'invisible': [('from_entity_type', '!=', 'customer')]}"/>
+		                    	<field name="partner_id_3"  attrs="{'invisible': [('from_entity_type', '!=', 'partner')]}"/>
+		                    	<field name="to_partner_id_1" attrs="{'invisible': [('to_entity_type', '!=', 'vendor')]}"/>
+		                    	<field name="to_partner_id_2" attrs="{'invisible': [('to_entity_type', '!=', 'customer')]}"/>
+		                    	<field name="to_partner_id_3" attrs="{'invisible': [('to_entity_type', '!=', 'partner')]}"/>
+		                    	<field name="inv_trans_created_date"/>
+		                    	<field name="inv_logged_date"/>
+		                	</group>
+		                </group>
+	               	</sheet>
+	        	</form>
+	     	</field>
+         </record>
+         
+         <record id="purchase_db_tree" model="ir.ui.view">
+	        <field name="name">purchase.database.tree</field>
+	        <field name="model">purchase.database</field>
+	        <field name="arch" type="xml">
+	            <tree string="Purchase Database">
+	                <field name="name"/>
+	            </tree>
+	        </field>
+    	 </record>
+    	 
+    	 <record id="purchase_db_action" model="ir.actions.act_window">
+	        <field name="name">Purchase Database</field>
+	        <field name="res_model">purchase.database</field>
+	        <field name="view_mode">tree,form</field>
+    	 </record>
+    	 
+    	 <!--Sale DB  -->
+    	 
+    	 <record id="sales_db_form" model="ir.ui.view">
+	        <field name="name">sales.database.form</field>
+	        <field name="model">sales.database</field>
+	        <field name="arch" type="xml">
+	            <form string="Sales Database">
+	                <sheet>
+	                	<group>
+	                		<group>
+	                			<field name="name"/>
+	                			<field name="war_in_months"/>
+	                			<field name="war_start_dt"/>
+	                			<field name="war_end_dt"/>
+	                			<field name="from_entity_type"/>
+	                			<field name="to_entity_type"/>
+	                			<field name="reference_id"/>
+	                			<field name="reference_date"/>
+	                			<field name="inv_trans_name"/>
+	                			<field name="inv_trans_id"/>
+		                    </group>
+		                    <group>
+		                    	<field name="product_id"/>
+		                    	<field name="product_code"/>
+		                    	<field name="product_desc"/>
+		                    	<field name="product_variant_id"/>
+		                    	<field name="partner_id_1" attrs="{'invisible': [('from_entity_type', '!=', 'vendor')]}"/>
+		                    	<field name="partner_id_2" attrs="{'invisible': [('from_entity_type', '!=', 'customer')]}"/>
+		                    	<field name="partner_id_3"  attrs="{'invisible': [('from_entity_type', '!=', 'partner')]}"/>
+		                    	<field name="to_partner_id_1" attrs="{'invisible': [('to_entity_type', '!=', 'vendor')]}"/>
+		                    	<field name="to_partner_id_2" attrs="{'invisible': [('to_entity_type', '!=', 'customer')]}"/>
+		                    	<field name="to_partner_id_3" attrs="{'invisible': [('to_entity_type', '!=', 'partner')]}"/>
+		                    	<field name="inv_trans_created_date"/>
+		                    	<field name="inv_logged_date"/>
+		                	</group>
+		                </group>
+	               	</sheet>
+	        	</form>
+	     	</field>
+         </record>
+         
+         <record id="sales_db_tree" model="ir.ui.view">
+	        <field name="name">sales.database.tree</field>
+	        <field name="model">sales.database</field>
+	        <field name="arch" type="xml">
+	            <tree string="Sales Database">
+	                <field name="name"/>
+	            </tree>
+	        </field>
+    	 </record>
+    	 
+    	 <record id="sales_db_action" model="ir.actions.act_window">
+	        <field name="name">Sales Database</field>
+	        <field name="res_model">sales.database</field>
+	        <field name="view_mode">tree,form</field>
+    	 </record>
+    	 
+    	 <!--AMC Database  -->
+    	 
+    	 <record id="amc_db_form" model="ir.ui.view">
+	        <field name="name">amc.database.form</field>
+	        <field name="model">amc.database</field>
+	        <field name="arch" type="xml">
+	            <form string="AMC Database">
+	                <sheet>
+	                	<group>
+	                		<group>
+	                			<field name="name"/>
+	                			<field name="product_id"/>
+		                    	<field name="product_code"/>
+		                    	<field name="product_desc"/>
+		                    	<field name="product_variant_id"/>
+		                    	<field name="partner_id"/>
+		                    	<field name="amc_type"/>
+		                    	<field name="amc_agreement_no"/>
+		                    </group>
+		                    <group>
+		                    	<field name="amc_inv_no"/>
+		                    	<field name="amc_inv_date"/>
+		                    	<field name="amc_duration"/>
+		                    	<field name="amc_start_date"/>
+		                    	<field name="amc_end_date"/>
+		                    	<field name="amc_active"/>
+		                    	<field name="amc_notes"/> 
+		                	</group>
+		                </group>
+	               	</sheet>
+	        	</form>
+	     	</field>
+         </record>
+         
+         <record id="amc_db_tree" model="ir.ui.view">
+	        <field name="name">amc.database.tree</field>
+	        <field name="model">amc.database</field>
+	        <field name="arch" type="xml">
+	            <tree string="AMC Database">
+	                <field name="name" string="Serial No."/>
+	            </tree>
+	        </field>
+    	 </record>
+    	 
+    	 <record id="amc_db_action" model="ir.actions.act_window">
+	        <field name="name">AMC Database</field>
+	        <field name="res_model">amc.database</field>
+	        <field name="view_mode">tree,form</field>
+    	 </record>
+    	 
+    	 
+    	<!--Menus  -->
+    	 
+    	<menuitem id="purchase_db_menu"
+	        parent="service_management.service_db_menu"
+	        action="purchase_db_action"
+	        sequence="1"/>
+	        
+	    <menuitem id="sales_db_menu"
+	        parent="service_management.service_db_menu"
+	        action="sales_db_action"
+	        sequence="2"/>
+	        
+	    <menuitem id="amc_db_menu"
+	        parent="service_management.service_db_menu"
+	        action="amc_db_action"
+	        sequence="3"/>
+	    	 
+    	 
+    	
+    	
+	</data>
+</odoo>
