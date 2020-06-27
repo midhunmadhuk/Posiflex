@@ -33,8 +33,15 @@ class SerialWiseHistory(models.Model):
 class ActivityDetails(models.Model):
     _name = "activity.details"
     
+    @api.onchange('user_type')
+    def onchange_many2onefield(self):
+        users = self.user_type.users.ids
+        return {'domain': {'user_id': [('id', 'in', users)]}}
+    
+    
     name = fields.Char('Activity Type')
-    time = fields.Float(string='Time')
+    date = fields.Datetime('Activity Created Date')
+    time = fields.Datetime(string='Activity Logged Date')
     activity_type_id = fields.Many2one('activity.type', 'Activity Type')
     engineer_id = fields.Many2one('hr.employee', 'Engineer')
     partner_id = fields.Many2one('res.partner', 'Partner')
@@ -45,6 +52,10 @@ class ActivityDetails(models.Model):
     sub_status_id = fields.Many2one('sub.status.info','Sub Status')
     spares_used = fields.Boolean('Spares Used')
     service_id = fields.Many2one('service.order', 'Service Order')
+    diagnostic_id = fields.Many2one('diagnosis.code', 'Diagnostic Code')
+    diagnostic_desc = fields.Char('Diagnostic Desc')
+    user_type = fields.Many2one('res.groups', string='User Type')
+    user_id = fields.Many2one('res.users', 'User Name')
     
 class SparesDetails(models.Model):
     _name = "spares.details"

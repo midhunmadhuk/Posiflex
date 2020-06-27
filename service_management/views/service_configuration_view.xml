@@ -369,6 +369,37 @@
 	        <field name="view_mode">tree,form</field>
     	</record>
     	
+    	<!--Diagnosis  Master-->
+    	<record id="diagnosis_code_form" model="ir.ui.view">
+	        <field name="name">diagnosis.code.form</field>
+	        <field name="model">diagnosis.code</field>
+	        <field name="arch" type="xml">
+	            <form string="Diagnosis Code">
+	            	<sheet>
+	                    <group>
+	                        <field name="name"/>
+	                    </group>
+	                </sheet>
+	            </form>
+	        </field>
+        </record>
+        
+        <record id="diagnosis_code_tree" model="ir.ui.view">
+	        <field name="name">diagnosis.code.tree</field>
+	        <field name="model">diagnosis.code</field>
+	        <field name="arch" type="xml">
+	            <tree string="Diagnosis Code">
+	                <field name="name"/>
+	            </tree>
+	        </field>
+    	</record>
+    	
+    	<record id="diagnosis_code_action" model="ir.actions.act_window">
+	        <field name="name">Diagnosis Code</field>
+	        <field name="res_model">diagnosis.code</field>
+	        <field name="view_mode">tree,form</field>
+    	</record>
+    	
     	
     	<!--Menu  -->
     	
@@ -427,10 +458,15 @@
 	        action="activity_type_action"
 	        sequence="9"/>
 	        
+	        <menuitem id="diagnosis_code_menu"
+	        parent="config_menu"
+	        action="diagnosis_code_action"
+	        sequence="10"/>
+	        
 	        <menuitem id="serial_master_menu"
 	        parent="config_menu"
 	        action="serial_no_master_action"
-	        sequence="10"/>
+	        sequence="11"/>
 	        
 	        
 	       

@@ -18,7 +18,6 @@
 	                			<field name="reference_id"/>
 	                			<field name="reference_date"/>
 	                			<field name="inv_trans_name"/>
-	                			<field name="inv_trans_id"/>
 		                    </group>
 		                    <group>
 		                    	<field name="product_id"/>
@@ -33,6 +32,7 @@
 		                    	<field name="to_partner_id_3" attrs="{'invisible': [('to_entity_type', '!=', 'partner')]}"/>
 		                    	<field name="inv_trans_created_date"/>
 		                    	<field name="inv_logged_date"/>
+		                    	<field name="inv_trans_id"/>
 		                	</group>
 		                </group>
 	               	</sheet>
@@ -75,7 +75,6 @@
 	                			<field name="reference_id"/>
 	                			<field name="reference_date"/>
 	                			<field name="inv_trans_name"/>
-	                			<field name="inv_trans_id"/>
 		                    </group>
 		                    <group>
 		                    	<field name="product_id"/>
@@ -90,6 +89,7 @@
 		                    	<field name="to_partner_id_3" attrs="{'invisible': [('to_entity_type', '!=', 'partner')]}"/>
 		                    	<field name="inv_trans_created_date"/>
 		                    	<field name="inv_logged_date"/>
+		                    	<field name="inv_trans_id"/>
 		                	</group>
 		                </group>
 	               	</sheet>

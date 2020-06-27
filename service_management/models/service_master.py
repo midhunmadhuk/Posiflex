@@ -56,6 +56,11 @@ class ActivityType(models.Model):
     
     name = fields.Char('Name', required=True)
     
+class DiagnosisCode(models.Model):
+    _name = 'diagnosis.code'
+    
+    name = fields.Char('Name')
+    
 class SerialNoMaster(models.Model):
     _name = 'serial.no.master'
     
