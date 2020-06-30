@@ -13,7 +13,7 @@
                 </header>
                 <sheet>
                     <group>
-                        <field name="company_id"/>
+                        <field name="company_id" invisible="1"/>
                     </group>
                     <group>
                         <group string="Call Info">
@@ -26,7 +26,9 @@
                             <field name="customer_ref_no"/>
                         </group>
                         <group string="Product Info">
-                            <field name="serial_no"/>
+                            <field name="serial_no"/> 
+                            <!-- <button  name="check_serial" icon="fa-search-plus" string="Search"
+                                    type="action"/> -->
                             <field name="product_categ_id"/>
                             <field name="product_id" domain="[('categ_id', 'child_of', product_categ_id)]"/>
                             <field name="product_no"/>
@@ -112,18 +114,17 @@
                     		<field name="activity_ids">
                     			<tree editable="bottom">
                     				<field name="name"  width="150px"/>
-                    				<field name="time" widget="float_time"  width="150px"/>
-                    				<field name="user_type"/>
-                    				<field name="user_id"/>
-                    				<!-- <field name="engineer_id"  width="150px"/>
-                    				<field name="partner_id" domain="[('is_partner', '=', True)]"  width="150px"/> -->
-                    				<field name="diagnostic_id"  width="150px"/>
-                    				<field name="diagnostic_desc"  width="150px"/>
-                    				<field name="action_code"  width="150px"/>
-                    				<field name="action_desc"  width="150px"/>
-                    				<field name="action_remarks"  width="150px"/>
-                    				<field name="status_id"  width="150px"/>
-                    				<field name="sub_status_id" domain="[('status_id','=', status_id)]"  width="150px"/>
+                    				<field name="date" width="150px"/>
+                    				<field name="time"   width="150px"/>
+                    				<field name="user_type" width="150px"/>
+                    				<field name="user_id" width="150px"/>
+                    				<field name="diagnostic_id"  width="300px"/>
+                    				<field name="diagnostic_desc"  width="300px"/>
+                    				<field name="action_code"  width="300px"/>
+                    				<field name="action_desc"  width="300px"/>
+                    				<field name="action_remarks"  width="300px"/>
+                    				<field name="status_id"  width="200px"/>
+                    				<field name="sub_status_id" domain="[('status_id','=', status_id)]"  width="200px"/>
                     			</tree>
                     		</field>
                     	</page>
@@ -146,6 +147,65 @@
                     				<field name="tat_in_hours" widget="float_time"  width="150px"/>
                     				<field name="tat_achieved" string="TAT Achieved(Hr)" widget="float_time"  width="200px"/>
                     				<field name="sla_met"  width="150px"/>
+                    			</tree>
+                    		</field>
+                    	</page>
+                    	<page string="Open Calls" name="open_call_ids">
+                    		<field name="open_call_ids">
+                    			<tree editable="bottom">
+                    				<field name="customer_id"/>
+                    				<field name="name" invisible="1"/>
+                    				<field name="call_tkt_no"/>
+                    				<field name="product"/>
+                    				<field name="serial_no"/>
+                    				<field name="prob_code_id"/>
+                    				<field name="action_code_id"/>
+                    				<field name="status_id"/>
+                    			</tree>
+                    		</field>
+                    	</page>
+                    	<page string="Repeat Calls" name="repeat_call_ids">
+                    		<field name="repeat_call_ids">
+                    			<tree editable="bottom">
+                    				<field name="customer_id"/>
+                    				<field name="name" invisible="1"/>
+                    				<field name="call_tkt_no"/>
+                    				<field name="product"/>
+                    				<field name="serial_no"/>
+                    				<field name="prob_code_id"/>
+                    				<field name="action_code_id"/>
+                    				<field name="status_id"/>
+                    			</tree>
+                    		</field>
+                    	</page>
+                    	<page string="Re-Opened Calls" name="reopened_call_history">
+                    		<field name="reopened_call_history">
+                    			<tree editable="bottom">
+                    				<field name="customer_id"/>
+                    				<field name="name" invisible="1"/>
+                    				<field name="call_tkt_no"/>
+                    				<field name="product"/>
+                    				<field name="serial_no"/>
+                    				<field name="prob_code_id"/>
+                    				<field name="action_code_id"/>
+                    				<field name="status_id"/>
+                    			</tree>
+                    		</field>
+                    	</page>
+                    	<page string="Serial No.DB" name="sale_db_ids">
+                    		<field name="sale_db_ids">
+                    			<tree editable="bottom">
+                    				<field name="name"/>
+                    				<field name="db_type"/>
+                    				<field name="entity_type"/>
+                    				<field name="from_name"/>
+                    				<field name="to_entity_type"/>
+                    				<field name="to_name"/>
+                    				<field name="sale_inv_no"/>
+                    				<field name="sale_inv_date"/>
+                    				<field name="war_in_months"/>
+                    				<field name="war_start_dt"/>
+                    				<field name="war_end_dt"/>
                     			</tree>
                     		</field>
                     	</page>

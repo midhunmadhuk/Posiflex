@@ -45,11 +45,13 @@ class ProblemCode(models.Model):
     _name = 'problem.code'
     
     name = fields.Char('Name', required=True)
+    categ_id = fields.Many2one('Category')
     
 class ActionCode(models.Model):
     _name = 'action.code'
 
     name = fields.Char('Name', required=True)
+    categ_id = fields.Many2one('Category')
     
 class ActivityType(models.Model):
     _name = 'activity.type'
@@ -60,15 +62,17 @@ class DiagnosisCode(models.Model):
     _name = 'diagnosis.code'
     
     name = fields.Char('Name')
+    categ_id = fields.Many2one('Category')
     
 class SerialNoMaster(models.Model):
     _name = 'serial.no.master'
     
     name = fields.Char('Serial No.')
     product_id = fields.Many2one('product.template', 'Product')
-    avail_entity_type = fields.Selection([('partner', 'Partner'), ('customer', 'Customer')], string="Available Entity Type")
+    avail_entity_type = fields.Selection([('partner', 'Partner'), ('customer', 'Customer'), ('warehouse', 'Warehouse')], string="Available Entity Type")
     partner_id = fields.Many2one('res.partner', 'Partner')
     customer_id = fields.Many2one('res.partner', 'Customer')
+    location_id = fields.Many2one('stock.location', 'Warehouse')
     war_latest = fields.Many2one('warranty.type', 'WAR Latest')
     war_in_months = fields.Float('WAR In Months')
     war_start_dt = fields.Datetime('WAR Start Date')

@@ -1,7 +1,64 @@
 # -*- coding: utf-8 -*-
 # Part of Odoo. See LICENSE file for full copyright and licensing details.
 
-from odoo import api, fields, models, tools
+from odoo import api, fields, models, tools, _
+from odoo.exceptions import UserError, ValidationError
+
+class SerialNoDB(models.Model):
+    _name = 'serial.no.db'
+     
+    name = fields.Char('Serial No.')
+    db_type = fields.Char('DB')
+    entity_type = fields.Selection([('partner', 'Partner'), ('vendor', 'Vendor'), ('customer', 'Customer'), ('warehouse', 'Warehouse')], string="From Type")
+    from_name = fields.Char('From Name')
+    to_entity_type = fields.Selection([('partner', 'Partner'), ('vendor', 'Vendor'), ('customer', 'Customer'), ('warehouse', 'Warehouse')], string="From Type")
+    to_name = fields.Char('To Name')
+    sale_inv_no = fields.Char('Sale Invoice No.')
+    sale_inv_date = fields.Date('Sale Invoice Date')
+    war_in_months = fields.Float('WAR In Months')
+    war_start_dt = fields.Datetime('WAR Start Date')
+    war_end_dt = fields.Datetime('WAR End Date')
+    service_id = fields.Many2one('service.order', 'Service Order')
+
+class OpencallHistoy(models.Model):
+    _name = "open.call.history"
+    
+    name = fields.Char('Name')
+    customer_id = fields.Many2one('res.partner', 'Customer')
+    call_tkt_no = fields.Char('Call Ticket No.')
+    product = fields.Many2one('product.template', 'Product')
+    serial_no = fields.Many2one('serial.no.master', 'Serial No.')
+    prob_code_id = fields.Many2one('problem.code', 'PROB Code')
+    action_code_id = fields.Many2one('action.code', 'Action Code')
+    status_id = fields.Many2one('status.info','Status')
+    service_id = fields.Many2one('service.order', 'Service Order')
+    
+class RepeatcallHistoy(models.Model):
+    _name = "repeat.call.history"
+    
+    name = fields.Char('Name')
+    customer_id = fields.Many2one('res.partner', 'Customer')
+    call_tkt_no = fields.Char('Call Ticket No.')
+    product = fields.Many2one('product.template', 'Product')
+    serial_no = fields.Many2one('serial.no.master', 'Serial No.')
+    prob_code_id = fields.Many2one('problem.code', 'PROB Code')
+    action_code_id = fields.Many2one('action.code', 'Action Code')
+    status_id = fields.Many2one('status.info','Status')
+    service_id = fields.Many2one('service.order', 'Service Order')
+    
+    
+class ReopenedCallHistory(models.Model):
+    _name = "reopened.call.history"
+    
+    name = fields.Char('Name')
+    customer_id = fields.Many2one('res.partner', 'Customer')
+    call_tkt_no = fields.Char('Call Ticket No.')
+    product = fields.Many2one('product.template', 'Product')
+    serial_no = fields.Many2one('serial.no.master', 'Serial No.')
+    prob_code_id = fields.Many2one('problem.code', 'PROB Code')
+    action_code_id = fields.Many2one('action.code', 'Action Code')
+    status_id = fields.Many2one('status.info','Status')
+    service_id = fields.Many2one('service.order', 'Service Order')
 
 
 class CallWiseHistory(models.Model):
@@ -39,7 +96,7 @@ class ActivityDetails(models.Model):
         return {'domain': {'user_id': [('id', 'in', users)]}}
     
     
-    name = fields.Char('Activity Type')
+    name = fields.Many2one('activity.type','Activity Type')
     date = fields.Datetime('Activity Created Date')
     time = fields.Datetime(string='Activity Logged Date')
     activity_type_id = fields.Many2one('activity.type', 'Activity Type')
@@ -119,17 +176,79 @@ class ServiceOrder(models.Model):
     @api.onchange('serial_no')
     def onchange_serial(self):
         if self.serial_no:
-            self.product_id = self.serial_no.product_id or False
-            self.product_no = self.serial_no.product_id and self.serial_no.product_id.default_code or False
-            if self.serial_no.avail_entity_type == "customer":
-                self.customer_id = self.serial_no.customer_id
+            sales_data = self.env['sales.database'].search([('name', '=', self.serial_no.name)])
+            if sales_data:
+                self.product_id = sales_data[0].product_id or False
+                self.product_categ_id = sales_data[0].product_categ_id or False
+                self.product_no = sales_data[0].product_id and self.serial_no.product_id.default_code or False
             else:
-                self.partner_name_id = self.serial_no.partner_id
+                self.product_id = False
+                self.product_categ_id = False
+                self.product_no = ''
+                raise UserError(_('There is no sales record belong  to this serial No.'))
+#             if self.serial_no.avail_entity_type == "customer":
+#                 self.customer_id = self.serial_no.customer_id
+#             else:
+#                 self.partner_name_id = self.serial_no.partner_id
             self.war_in_months = self.serial_no.war_in_months
             self.war_start_date = self.serial_no.war_start_dt
             self.war_end_date = self.serial_no.war_end_dt
             self.war_balance = self.serial_no.war_balance
             self.war_status = self.serial_no.war_status
+            sales_data
+            sales_db_list = []
+            self.sale_db_ids.unlink()
+            for saledb_data in sales_data:
+                sale_data = {
+                    'name': saledb_data.name,
+                    'db_type': 'Sale DB',
+                    'entity_type': saledb_data.from_entity_type,
+                    'from_name':  saledb_data.partner_id_1 and saledb_data.partner_id_1.name or saledb_data.partner_id_2 and saledb_data.partner_id_2.name  or  saledb_data.partner_id_3 and saledb_data.partner_id_3.name or saledb_data.location_id and saledb_data.location_id.name,
+                    'to_entity_type': saledb_data.to_entity_type,
+                    'to_name': saledb_data.to_partner_id_1 and saledb_data.to_partner_id_1.name or saledb_data.to_partner_id_2 and saledb_data.to_partner_id_2.name  or  saledb_data.to_partner_id_3 and saledb_data.to_partner_id_3.name or saledb_data.to_location_id and saledb_data.to_location_id.name,
+                    'sale_inv_no': saledb_data.inv_trans_id,
+                    'sale_inv_date': saledb_data.inv_trans_created_date,
+                    'war_in_months': saledb_data.war_in_months,
+                    'war_start_dt': saledb_data.war_start_dt,
+                    'war_end_dt' : saledb_data.war_end_dt
+                    }
+                sales_db_list.append((0,0, sale_data))
+            self.sale_db_ids = sales_db_list
+            
+            purchase_db_list = []
+            purchase_datas = self.env['purchase.database'].search([('name', '=', self.serial_no.name)])
+            for purchase_db_data in purchase_datas:
+                purchas_data = {
+                    'name': purchase_db_data.name,
+                    'db_type': 'Sale DB',
+                    'entity_type': purchase_db_data.from_entity_type,
+                    'from_name':  purchase_db_data.partner_id_1 and purchase_db_data.partner_id_1.name or purchase_db_data.partner_id_2 and purchase_db_data.partner_id_2.name  or  purchase_db_data.partner_id_3 and purchase_db_data.partner_id_3.name or purchase_db_data.location_id and purchase_db_data.location_id.name,
+                    'to_entity_type': purchase_db_data.to_entity_type,
+                    'to_name': purchase_db_data.to_partner_id_1 and purchase_db_data.to_partner_id_1.name or purchase_db_data.to_partner_id_2 and purchase_db_data.to_partner_id_2.name  or  purchase_db_data.to_partner_id_3 and purchase_db_data.to_partner_id_3.name or purchase_db_data.to_location_id and purchase_db_data.to_location_id.name,
+                    'sale_inv_no':  purchase_db_data.inv_trans_id,
+                    'sale_inv_date': purchase_db_data.inv_trans_created_date,
+                    'war_in_months': purchase_db_data.war_in_months,
+                    'war_start_dt': purchase_db_data.war_start_dt,
+                    'war_end_dt' : purchase_db_data.war_end_dt
+                    }
+                purchase_db_list.append((0,0, purchas_data))
+            self.sale_db_ids = purchase_db_list
+#             amc_db_list = []
+#             amc_db_datas = self.env['amc.database'].search([('name', '=', self.serial_no.name)])
+#             for amc_db_data in amc_db_datas:
+#                 amc_data = {
+#                     'name': amc_db_data.name,
+#                     'db_type': 'Sale DB',
+#                     'entity_type': amc_db_data.from_entity_type,
+#                     'from_name':  purchase_db_data.partner_id_1 and purchase_db_data.partner_id_1.name or purchase_db_data.partner_id_2 and purchase_db_data.partner_id_2.name  or  purchase_db_data.partner_id_3 and purchase_db_data.partner_id_3.name or purchase_db_data.location_id and purchase_db_data.location_id.name,
+#                     'to_entity_type': purchase_db_data.to_entity_type,
+#                     'to_name': purchase_db_data.to_partner_id_1 and purchase_db_data.to_partner_id_1.name or purchase_db_data.to_partner_id_2 and purchase_db_data.to_partner_id_2.name  or  purchase_db_data.to_partner_id_3 and purchase_db_data.to_partner_id_3.name or purchase_db_data.to_location_id and purchase_db_data.to_location_id.name,
+#                     'sale_inv_no': 
+#                     'sale_inv_date':
+#                     'war_in_months': purchase_db_data.war_in_months,
+#                     'war_start_dt': purchase_db_data.war_start_dt,
+#                     'war_end_dt' : purchase_db_data.war_end_dt
+#                     }
             serial_wise_orders = self.env['service.order'].search([('serial_no', '=', self.serial_no.id)])
             serial_wise_data = []
             self.serial_history_ids.unlink()
@@ -187,6 +306,10 @@ class ServiceOrder(models.Model):
     closure_desc = fields.Char('Closure Description')
     call_history_ids = fields.One2many('call.wise.history', 'service_id', string='Customer Wise Call History')
     serial_history_ids = fields.One2many('serial.wise.history', 'service_id', string='Serial Wise Call History')
+    open_call_ids = fields.One2many('open.call.history', 'service_id', string='Open Calls')
+    repeat_call_ids = fields.One2many('repeat.call.history', 'service_id', string='Repeat Calls')
+    reopened_call_history = fields.One2many('reopened.call.history', 'service_id', string='Re-Opened Calls')
+    sale_db_ids = fields.One2many('serial.no.db', 'service_id', string="Serial No. DB")
     activity_ids = fields.One2many('activity.details', 'service_id', string='Activities')
     spares_details_ids = fields.One2many('spares.details', 'service_id', string='Spares Info')
     sla_details_ids = fields.One2many('sla.details', 'service_id', string='SLA Info')
@@ -200,6 +323,9 @@ class ServiceOrder(models.Model):
     product_categ_id = fields.Many2one('product.category', 'Product Category')
     online_support_id = fields.Many2one('res.users', 'Online Support')
     last_activity_id = fields.Many2one('activity.details', compute='_check_last_activity')
+    
+#     def check_serial(self):
+#         return True
     
     @api.depends('activity_ids')
     def _check_last_activity(self):

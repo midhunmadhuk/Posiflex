@@ -21,3 +21,7 @@ access_purchase_database_all,access_purchase_database,model_purchase_database,,1
 access_sales_database_all,access_sales_database,model_sales_database,,1,1,1,1
 access_amc_database_all,access_amc_database,model_amc_database,,1,1,1,1
 access_diagnosis_code_all,access_diagnosis_code,model_diagnosis_code,,1,1,1,1
+access_serial_no_db_all,access_serial_no_db,model_serial_no_db,,1,1,1,1
+access_open_call_history_all,access_open_call_history,model_open_call_history,,1,1,1,1
+access_repeat_call_history_all,access_repeat_call_history,model_repeat_call_history,,1,1,1,1
+access_reopened_call_history_all,access_reopened_call_history,model_reopened_call_history,,1,1,1,1

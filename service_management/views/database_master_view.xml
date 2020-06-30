@@ -20,16 +20,18 @@
 	                			<field name="inv_trans_name"/>
 		                    </group>
 		                    <group>
+		                    	<field name="product_categ_id"/>
 		                    	<field name="product_id"/>
-		                    	<field name="product_code"/>
 		                    	<field name="product_desc"/>
 		                    	<field name="product_variant_id"/>
 		                    	<field name="partner_id_1" attrs="{'invisible': [('from_entity_type', '!=', 'vendor')]}"/>
 		                    	<field name="partner_id_2" attrs="{'invisible': [('from_entity_type', '!=', 'customer')]}"/>
 		                    	<field name="partner_id_3"  attrs="{'invisible': [('from_entity_type', '!=', 'partner')]}"/>
+		                    	<field name="location_id" attrs="{'invisible': [('from_entity_type', '!=', 'warehouse')]}"/>
 		                    	<field name="to_partner_id_1" attrs="{'invisible': [('to_entity_type', '!=', 'vendor')]}"/>
 		                    	<field name="to_partner_id_2" attrs="{'invisible': [('to_entity_type', '!=', 'customer')]}"/>
 		                    	<field name="to_partner_id_3" attrs="{'invisible': [('to_entity_type', '!=', 'partner')]}"/>
+		                    	<field name="to_location_id" attrs="{'invisible': [('to_entity_type', '!=', 'warehouse')]}"/>
 		                    	<field name="inv_trans_created_date"/>
 		                    	<field name="inv_logged_date"/>
 		                    	<field name="inv_trans_id"/>
@@ -77,16 +79,18 @@
 	                			<field name="inv_trans_name"/>
 		                    </group>
 		                    <group>
+		                    	<field name="product_categ_id"/>
 		                    	<field name="product_id"/>
-		                    	<field name="product_code"/>
 		                    	<field name="product_desc"/>
 		                    	<field name="product_variant_id"/>
 		                    	<field name="partner_id_1" attrs="{'invisible': [('from_entity_type', '!=', 'vendor')]}"/>
 		                    	<field name="partner_id_2" attrs="{'invisible': [('from_entity_type', '!=', 'customer')]}"/>
 		                    	<field name="partner_id_3"  attrs="{'invisible': [('from_entity_type', '!=', 'partner')]}"/>
+		                    	<field name="location_id" attrs="{'invisible': [('from_entity_type', '!=', 'warehouse')]}"/>
 		                    	<field name="to_partner_id_1" attrs="{'invisible': [('to_entity_type', '!=', 'vendor')]}"/>
 		                    	<field name="to_partner_id_2" attrs="{'invisible': [('to_entity_type', '!=', 'customer')]}"/>
 		                    	<field name="to_partner_id_3" attrs="{'invisible': [('to_entity_type', '!=', 'partner')]}"/>
+		                    	<field name="to_location_id" attrs="{'invisible': [('to_entity_type', '!=', 'warehouse')]}"/>
 		                    	<field name="inv_trans_created_date"/>
 		                    	<field name="inv_logged_date"/>
 		                    	<field name="inv_trans_id"/>
@@ -124,11 +128,11 @@
 	                	<group>
 	                		<group>
 	                			<field name="name"/>
-	                			<field name="product_id"/>
-		                    	<field name="product_code"/>
+	                			<field name="product_categ_id"/>
+		                    	<field name="product_id"/>
 		                    	<field name="product_desc"/>
-		                    	<field name="product_variant_id"/>
-		                    	<field name="partner_id"/>
+		                    	<field name="from_entity_type"/>
+	                			<field name="to_entity_type"/>
 		                    	<field name="amc_type"/>
 		                    	<field name="amc_agreement_no"/>
 		                    </group>
@@ -136,6 +140,15 @@
 		                    	<field name="amc_inv_no"/>
 		                    	<field name="amc_inv_date"/>
 		                    	<field name="amc_duration"/>
+		                    	<field name="product_variant_id"/>
+		                    	<field name="partner_id_1" attrs="{'invisible': [('from_entity_type', '!=', 'vendor')]}"/>
+		                    	<field name="partner_id_2" attrs="{'invisible': [('from_entity_type', '!=', 'customer')]}"/>
+		                    	<field name="partner_id_3"  attrs="{'invisible': [('from_entity_type', '!=', 'partner')]}"/>
+		                    	<field name="location_id" attrs="{'invisible': [('from_entity_type', '!=', 'warehouse')]}"/>
+		                    	<field name="to_partner_id_1" attrs="{'invisible': [('to_entity_type', '!=', 'vendor')]}"/>
+		                    	<field name="to_partner_id_2" attrs="{'invisible': [('to_entity_type', '!=', 'customer')]}"/>
+		                    	<field name="to_partner_id_3" attrs="{'invisible': [('to_entity_type', '!=', 'partner')]}"/>
+		                    	<field name="to_location_id" attrs="{'invisible': [('to_entity_type', '!=', 'warehouse')]}"/>
 		                    	<field name="amc_start_date"/>
 		                    	<field name="amc_end_date"/>
 		                    	<field name="amc_active"/>

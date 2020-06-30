@@ -270,6 +270,7 @@
 	            	<sheet>
 	                    <group>
 	                        <field name="name"/>
+	                        <field name="categ_id"/>
 	                    </group>
 	                </sheet>
 	            </form>
@@ -282,6 +283,7 @@
 	        <field name="arch" type="xml">
 	            <tree string="Problem Code">
 	                <field name="name"/>
+	                <field name="categ_id"/>
 	            </tree>
 	        </field>
     	</record>
@@ -302,6 +304,7 @@
 	            	<sheet>
 	                    <group>
 	                        <field name="name"/>
+	                        <field name="categ_id"/>
 	                    </group>
 	                </sheet>
 	            </form>
@@ -314,6 +317,7 @@
 	        <field name="arch" type="xml">
 	            <tree string="Action Code">
 	                <field name="name"/>
+	                <field name="categ_id"/>
 	            </tree>
 	        </field>
     	</record>
@@ -344,6 +348,7 @@
 	                        	<field name="war_in_months"/>
 	                        	<field name="partner_id" attrs="{'invisible': [('avail_entity_type', '!=', 'partner')]}"/>
 	                        	<field name="customer_id" attrs="{'invisible': [('avail_entity_type', '!=', 'customer')]}"/>
+	                        	<field name="location_id" attrs="{'invisible': [('avail_entity_type', '!=', 'warehouse')]}"/>
 	                        	<field name="war_end_dt"/>
 	                        	<field name="war_status"/>
 	                        </group>
@@ -378,6 +383,7 @@
 	            	<sheet>
 	                    <group>
 	                        <field name="name"/>
+	                        <field name="categ_id"/>
 	                    </group>
 	                </sheet>
 	            </form>
@@ -390,6 +396,7 @@
 	        <field name="arch" type="xml">
 	            <tree string="Diagnosis Code">
 	                <field name="name"/>
+	                <field name="categ_id"/>
 	            </tree>
 	        </field>
     	</record>
