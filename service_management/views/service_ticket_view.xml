@@ -27,12 +27,11 @@
                         </group>
                         <group string="Product Info">
                             <field name="serial_no"/> 
-                            <!-- <button  name="check_serial" icon="fa-search-plus" string="Search"
-                                    type="action"/> -->
+                            <button  name="change_serial" icon="fa-search-plus" string="Search" type="object"/>
                             <field name="product_categ_id"/>
                             <field name="product_id" domain="[('categ_id', 'child_of', product_categ_id)]"/>
                             <field name="product_no"/>
-                            <field name="ptav_product_variant_ids" widget="many2many_tags" domain="[('product_tmpl_id','=',product_id)]"/>
+                            <field name="ptav_product_variant_id"  domain="[('product_tmpl_id','=',product_id)]"/>
                         </group>
                         <group string="Customer Info">
                             <field name="customer_id"/>
@@ -224,7 +223,7 @@
                 <field name="call_date_time" string="Call Created Date" width="150px"/>
                 <field name="serial_no" string="Serial No."/>
                 <field name="product_id" string="Product Name"/>
-                <field name="ptav_product_variant_ids" string="Variant" widget="many2many_tags"/>
+                <field name="ptav_product_variant_id" string="Variant"/>
                 <field name="customer_id" string="Customer Name" width="150px"/>
                 <field name="state_id" string="State"/>
                 <field name="city" string="City" width="100px"/>

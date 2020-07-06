@@ -3,6 +3,7 @@
 
 from odoo import api, fields, models, tools, _
 from odoo.exceptions import UserError, ValidationError
+from dateutil import relativedelta
 
 class SerialNoDB(models.Model):
     _name = 'serial.no.db'
@@ -146,6 +147,44 @@ class ServiceOrder(models.Model):
     def onchage_product(self):
         self.product_no = self.product_id.default_code
         
+        
+    def set_customer(self, customer):
+        if customer:
+            self.street = customer.street
+            self.street2 = customer.street2
+            self.city = customer.city
+            self.state_id = customer.state_id  or False
+            self.country_id = customer.country_id  or False
+            self.customer_type = customer.customer_type
+            self.mobile = customer.mobile
+            self.email = customer.email
+            self.call_history_ids.unlink()
+            customer_orders = self.env['service.order'].search([('customer_id', '=', customer.id)])
+            customer_call_data = []
+            for customer_order in customer_orders:
+                serial_id = self.env['serial.no.master'].search([('name', '=', customer_order.serial_no)], limit=1)
+                call_history = {
+                        'customer_id': customer_order.customer_id and customer_order.customer_id.id or False,
+                        'call_tkt_no': customer_order.name,
+                        'product': customer_order.product_id and customer_order.product_id.id or False,
+                        'serial_no': serial_id and serial_id.id  or False,
+                        'prob_code_id': customer_order.problem_code and customer_order.problem_code.id or False,
+                        'action_code_id': customer_order.last_activity_id and customer_order.last_activity_id.action_code and customer_order.last_activity_id.action_code.id or False,
+                        'status_id': customer_order.status and customer_order.status.id or False
+                    }
+                customer_call_data.append((0,0, call_history))
+            self.call_history_ids = customer_call_data
+        else:
+            self.street = ''
+            self.street2 = ''
+            self.city = ''
+            self.state_id =  False
+            self.country_id =  False
+            self.customer_type = ''
+            self.mobile = ''
+            self.email = ''
+            self.call_history_ids.unlink()
+        
     @api.onchange('customer_id')
     def onchange_customer(self):
         if self.customer_id:
@@ -161,66 +200,156 @@ class ServiceOrder(models.Model):
             customer_orders = self.env['service.order'].search([('customer_id', '=', self.customer_id.id)])
             customer_call_data = []
             for customer_order in customer_orders:
+                serial_id = self.env['serial.no.master'].search([('name', '=', customer_order.serial_no)], limit=1)
                 call_history = {
                         'customer_id': customer_order.customer_id and customer_order.customer_id.id or False,
                         'call_tkt_no': customer_order.name,
                         'product': customer_order.product_id and customer_order.product_id.id or False,
-                        'serial_no': customer_order.serial_no and customer_order.serial_no.id or False,
+                        'serial_no': serial_id and serial_id.id  or False,
                         'prob_code_id': customer_order.problem_code and customer_order.problem_code.id or False,
                         'action_code_id': customer_order.last_activity_id and customer_order.last_activity_id.action_code and customer_order.last_activity_id.action_code.id or False,
                         'status_id': customer_order.status and customer_order.status.id or False
                     }
                 customer_call_data.append((0,0, call_history))
             self.call_history_ids = customer_call_data
-        
-    @api.onchange('serial_no')
-    def onchange_serial(self):
-        if self.serial_no:
-            sales_data = self.env['sales.database'].search([('name', '=', self.serial_no.name)])
-            if sales_data:
-                self.product_id = sales_data[0].product_id or False
-                self.product_categ_id = sales_data[0].product_categ_id or False
-                self.product_no = sales_data[0].product_id and self.serial_no.product_id.default_code or False
-            else:
-                self.product_id = False
-                self.product_categ_id = False
-                self.product_no = ''
-                raise UserError(_('There is no sales record belong  to this serial No.'))
-#             if self.serial_no.avail_entity_type == "customer":
-#                 self.customer_id = self.serial_no.customer_id
-#             else:
-#                 self.partner_name_id = self.serial_no.partner_id
-            self.war_in_months = self.serial_no.war_in_months
-            self.war_start_date = self.serial_no.war_start_dt
-            self.war_end_date = self.serial_no.war_end_dt
-            self.war_balance = self.serial_no.war_balance
-            self.war_status = self.serial_no.war_status
-            sales_data
-            sales_db_list = []
-            self.sale_db_ids.unlink()
-            for saledb_data in sales_data:
-                sale_data = {
-                    'name': saledb_data.name,
-                    'db_type': 'Sale DB',
-                    'entity_type': saledb_data.from_entity_type,
-                    'from_name':  saledb_data.partner_id_1 and saledb_data.partner_id_1.name or saledb_data.partner_id_2 and saledb_data.partner_id_2.name  or  saledb_data.partner_id_3 and saledb_data.partner_id_3.name or saledb_data.location_id and saledb_data.location_id.name,
-                    'to_entity_type': saledb_data.to_entity_type,
-                    'to_name': saledb_data.to_partner_id_1 and saledb_data.to_partner_id_1.name or saledb_data.to_partner_id_2 and saledb_data.to_partner_id_2.name  or  saledb_data.to_partner_id_3 and saledb_data.to_partner_id_3.name or saledb_data.to_location_id and saledb_data.to_location_id.name,
-                    'sale_inv_no': saledb_data.inv_trans_id,
-                    'sale_inv_date': saledb_data.inv_trans_created_date,
-                    'war_in_months': saledb_data.war_in_months,
-                    'war_start_dt': saledb_data.war_start_dt,
-                    'war_end_dt' : saledb_data.war_end_dt
-                    }
-                sales_db_list.append((0,0, sale_data))
-            self.sale_db_ids = sales_db_list
+        else:
+            self.street = ''
+            self.street2 = ''
+            self.city = ''
+            self.state_id =  False
+            self.country_id =  False
+            self.customer_type = ''
+            self.mobile = ''
+            self.email = ''
+            self.call_history_ids.unlink()
             
+    def check_warranty_duration(self, end_date):
+        if end_date:
+            r = relativedelta.relativedelta(end_date, fields.Date.today())
+            service_months_remaining = r.months
+            return service_months_remaining
+    
+    def check_amc_warranty_status(self, end_date):
+        if end_date:
+            if fields.Date.today() <= end_date:
+                warranty_rec = self.env['warranty.type'].search([('name','=', 'AMC')])
+                if warranty_rec:
+                    return warranty_rec
+            else:
+                warranty_rec = self.env['warranty.type'].search([('name','=', 'OOW Warranty')])
+                if warranty_rec:
+                    return warranty_rec
+            
+    def check_service_warranty_status(self, end_date):
+        if end_date:
+            if fields.Date.today() <= end_date:
+                warranty_rec = self.env['warranty.type'].search([('name','=', 'In Warranty')])
+                if warranty_rec:
+                    return warranty_rec
+            else:
+                warranty_rec = self.env['warranty.type'].search([('name','=', 'OOW Warranty')])
+                if warranty_rec:
+                    return warranty_rec
+            
+    
+    def change_serial(self):
+        if not self.serial_no:
+            return True
+        serial_id = self.env['serial.no.master'].search([('name', '=', self.serial_no)], limit=1)
+        if serial_id:
+            serial_orders = self.env['service.order'].search([('serial_no', '=', self.serial_no),  ('id', '<', self.id), ('id', '!=', self.id)], order="id desc")
+            amc_db_datas = self.env['amc.database'].search([('name', '=', serial_id.name)], order="id desc")
+            sales_datas = self.env['sales.database'].search([('name', '=', serial_id.name)], order="id desc")
+            if serial_orders:
+                serial_orders
+                for serial_wise_order in serial_orders:
+                    self.customer_id = serial_wise_order.customer_id
+                    self.set_customer(serial_wise_order.customer_id)
+                    self.product_categ_id = serial_wise_order.product_categ_id
+                    self.product_id = serial_wise_order.product_id
+                    self.product_no = serial_wise_order.product_no
+                    self.war_in_months = self.check_warranty_duration(serial_wise_order.war_end_date)
+                    self.war_start_date = serial_wise_order.war_start_date
+                    self.war_end_date = serial_wise_order.war_end_date
+                    self.war_status = self.check_service_warranty_status(serial_wise_order.war_end_date)
+                    
+            if not serial_orders:
+                if amc_db_datas:
+                    customer = amc_db_datas[0].to_partner_id_1 or amc_db_datas[0].to_partner_id_2  or  amc_db_datas[0].to_partner_id_3
+                    self.customer_id = customer
+                    self.set_customer(customer)
+                    self.product_categ_id = amc_db_datas[0].product_categ_id
+                    self.product_id = amc_db_datas[0].product_id
+                    self.product_no = amc_db_datas[0].product_id and amc_db_datas[0].product_id.default_code or ''
+                    self.war_in_months = self.check_warranty_duration(amc_db_datas[0].amc_end_date)
+                    self.war_start_date = amc_db_datas[0].amc_start_date
+                    self.war_end_date = amc_db_datas[0].amc_end_date
+                    self.war_status = self.check_amc_warranty_status(amc_db_datas[0].amc_end_date)
+                    
+            if not serial_orders and not amc_db_datas:
+                if sales_datas:
+                    if sales_datas[0].to_entity_type == "customer":
+                        customer = sales_datas[0].to_partner_id_1 or sales_datas[0].to_partner_id_2  or  sales_datas[0].to_partner_id_3
+                        self.customer_id = customer
+                        self.set_customer(customer)
+                    self.product_id = sales_datas[0].product_id or False
+                    self.product_categ_id = sales_datas[0].product_categ_id or False
+                    self.product_no = sales_datas[0].product_id and sales_datas[0].product_id.default_code or ''
+                    self.war_in_months = self.check_warranty_duration(sales_datas[0].war_end_dt)
+                    self.war_start_date = sales_datas[0].war_start_dt
+                    self.war_end_date = sales_datas[0].war_end_dt
+                    self.war_status = self.check_service_warranty_status(sales_datas[0].war_end_dt)
+                    
+                    if  sales_datas[0].from_entity_type == "customer":
+                        self.customer_id = sales_datas[0].to_partner_id_2
+                        
+            if not serial_orders and not amc_db_datas and not sales_datas:
+                raise UserError(_('There is no sales record belong  to this serial No.'))
+            
+            self.sale_db_ids.unlink()
+            if amc_db_datas:
+                amc_db_list = []
+                for amc_db_data in amc_db_datas:
+                    amc_data = {
+                        'name': amc_db_data.name,
+                        'db_type': 'AMC DB',
+                        'entity_type': amc_db_data.from_entity_type,
+                        'from_name':  amc_db_data.partner_id_1 and amc_db_data.partner_id_1.name or amc_db_data.partner_id_2 and amc_db_data.partner_id_2.name  or  amc_db_data.partner_id_3 and amc_db_data.partner_id_3.name or amc_db_data.location_id and amc_db_data.location_id.name,
+                        'to_entity_type': amc_db_data.to_entity_type,
+                        'to_name': amc_db_data.to_partner_id_1 and amc_db_data.to_partner_id_1.name or amc_db_data.to_partner_id_2 and amc_db_data.to_partner_id_2.name  or  amc_db_data.to_partner_id_3 and amc_db_data.to_partner_id_3.name or amc_db_data.to_location_id and amc_db_data.to_location_id.name,
+                        'sale_inv_no': amc_db_data.amc_inv_no,
+                        'sale_inv_date': amc_db_data.amc_inv_date,
+                        'war_in_months': amc_db_data.amc_duration,
+                        'war_start_dt': amc_db_data.amc_start_date,
+                        'war_end_dt' : amc_db_data.amc_end_date
+                        }
+                    amc_db_list.append((0,0, amc_data))
+                self.sale_db_ids = amc_db_list
+            if sales_datas:
+                sales_db_list = []
+                for saledb_data in sales_datas:
+                    sale_data = {
+                        'name': saledb_data.name,
+                        'db_type': 'Sale DB',
+                        'entity_type': saledb_data.from_entity_type,
+                        'from_name':  saledb_data.partner_id_1 and saledb_data.partner_id_1.name or saledb_data.partner_id_2 and saledb_data.partner_id_2.name  or  saledb_data.partner_id_3 and saledb_data.partner_id_3.name or saledb_data.location_id and saledb_data.location_id.name,
+                        'to_entity_type': saledb_data.to_entity_type,
+                        'to_name': saledb_data.to_partner_id_1 and saledb_data.to_partner_id_1.name or saledb_data.to_partner_id_2 and saledb_data.to_partner_id_2.name  or  saledb_data.to_partner_id_3 and saledb_data.to_partner_id_3.name or saledb_data.to_location_id and saledb_data.to_location_id.name,
+                        'sale_inv_no': saledb_data.inv_trans_id,
+                        'sale_inv_date': saledb_data.inv_trans_created_date,
+                        'war_in_months': saledb_data.war_in_months,
+                        'war_start_dt': saledb_data.war_start_dt,
+                        'war_end_dt' : saledb_data.war_end_dt
+                        }
+                    sales_db_list.append((0,0, sale_data))
+                self.sale_db_ids = sales_db_list
+            
+            purchase_datas = self.env['purchase.database'].search([('name', '=', serial_id.name)], order="id desc")
             purchase_db_list = []
-            purchase_datas = self.env['purchase.database'].search([('name', '=', self.serial_no.name)])
             for purchase_db_data in purchase_datas:
                 purchas_data = {
                     'name': purchase_db_data.name,
-                    'db_type': 'Sale DB',
+                    'db_type': 'Purchase DB',
                     'entity_type': purchase_db_data.from_entity_type,
                     'from_name':  purchase_db_data.partner_id_1 and purchase_db_data.partner_id_1.name or purchase_db_data.partner_id_2 and purchase_db_data.partner_id_2.name  or  purchase_db_data.partner_id_3 and purchase_db_data.partner_id_3.name or purchase_db_data.location_id and purchase_db_data.location_id.name,
                     'to_entity_type': purchase_db_data.to_entity_type,
@@ -233,38 +362,27 @@ class ServiceOrder(models.Model):
                     }
                 purchase_db_list.append((0,0, purchas_data))
             self.sale_db_ids = purchase_db_list
-#             amc_db_list = []
-#             amc_db_datas = self.env['amc.database'].search([('name', '=', self.serial_no.name)])
-#             for amc_db_data in amc_db_datas:
-#                 amc_data = {
-#                     'name': amc_db_data.name,
-#                     'db_type': 'Sale DB',
-#                     'entity_type': amc_db_data.from_entity_type,
-#                     'from_name':  purchase_db_data.partner_id_1 and purchase_db_data.partner_id_1.name or purchase_db_data.partner_id_2 and purchase_db_data.partner_id_2.name  or  purchase_db_data.partner_id_3 and purchase_db_data.partner_id_3.name or purchase_db_data.location_id and purchase_db_data.location_id.name,
-#                     'to_entity_type': purchase_db_data.to_entity_type,
-#                     'to_name': purchase_db_data.to_partner_id_1 and purchase_db_data.to_partner_id_1.name or purchase_db_data.to_partner_id_2 and purchase_db_data.to_partner_id_2.name  or  purchase_db_data.to_partner_id_3 and purchase_db_data.to_partner_id_3.name or purchase_db_data.to_location_id and purchase_db_data.to_location_id.name,
-#                     'sale_inv_no': 
-#                     'sale_inv_date':
-#                     'war_in_months': purchase_db_data.war_in_months,
-#                     'war_start_dt': purchase_db_data.war_start_dt,
-#                     'war_end_dt' : purchase_db_data.war_end_dt
-#                     }
-            serial_wise_orders = self.env['service.order'].search([('serial_no', '=', self.serial_no.id)])
-            serial_wise_data = []
-            self.serial_history_ids.unlink()
-            for serial_wise_order in serial_wise_orders:
-                serial_history = {
-                        'customer_id': serial_wise_order.customer_id and serial_wise_order.customer_id.id or False,
-                        'call_tkt_no': serial_wise_order.name,
-                        'product': serial_wise_order.product_id and serial_wise_order.product_id.id or False,
-                        'serial_no': serial_wise_order.serial_no and serial_wise_order.serial_no.id or False,
-                        'prob_code_id': serial_wise_order.problem_code and serial_wise_order.problem_code.id or False,
-                        'action_code_id': serial_wise_order.last_activity_id and serial_wise_order.last_activity_id.action_code and serial_wise_order.last_activity_id.action_code.id or False,
-                        'status_id': serial_wise_order.status and serial_wise_order.status.id or False
-                    }
-                serial_wise_data.append((0,0, serial_history))
-            self.serial_history_ids = serial_wise_data
-        
+            serial_wise_orders = self.env['service.order'].search([('serial_no', '=', self.serial_no), ('id', '!=', self.id)], order="id desc")
+            print ("serial_wise_orders",serial_wise_orders)
+            if serial_wise_orders:
+                self.serial_history_ids.unlink()
+                serial_wise_data = []
+                for serial_wise_order in serial_wise_orders:
+                    print ("11111111")
+                    serial_id = self.env['serial.no.master'].search([('name', '=', serial_wise_order.serial_no)], limit=1)
+                    serial_history = {
+                            'customer_id': serial_wise_order.customer_id and serial_wise_order.customer_id.id or False,
+                            'call_tkt_no': serial_wise_order.name,
+                            'product': serial_wise_order.product_id and serial_wise_order.product_id.id or False,
+                            'serial_no': serial_id and serial_id.id  or False,
+                            'prob_code_id': serial_wise_order.problem_code and serial_wise_order.problem_code.id or False,
+                            'action_code_id': serial_wise_order.last_activity_id and serial_wise_order.last_activity_id.action_code and serial_wise_order.last_activity_id.action_code.id or False,
+                            'status_id': serial_wise_order.status and serial_wise_order.status.id or False
+                        }
+                    serial_wise_data.append((0,0, serial_history))
+                self.serial_history_ids = serial_wise_data
+        else:
+            raise UserError(_('Serial No. Does not exist'))
         
     name = fields.Char('Call Ticket No.', copy=False, default=lambda self: self.env['ir.sequence'].next_by_code('service.order'))
     company_id =  fields.Many2one('res.company', 'Company',default=lambda self: self.env.user.company_id)
@@ -274,9 +392,9 @@ class ServiceOrder(models.Model):
     status = fields.Many2one('status.info', compute='_check_last_activity', string='Status')
     sub_status = fields.Many2one('sub.status.info', compute='_check_last_activity',  string='Sub Status')
     customer_ref_no = fields.Char('Customer Ref No.')
-    serial_no = fields.Many2one('serial.no.master', 'Serial No.')
+    serial_no = fields.Char('Serial No.')
     product_id = fields.Many2one('product.template','Product')
-    ptav_product_variant_ids = fields.Many2many('product.product', string="Related Variants")
+    ptav_product_variant_id = fields.Many2one('product.product', string="Related Variant")
     product_no = fields.Char('Product No.')
     customer_id = fields.Many2one('res.partner', 'Customer')
     customer_type = fields.Many2one('customer.type', 'Customer Type')
@@ -315,8 +433,8 @@ class ServiceOrder(models.Model):
     sla_details_ids = fields.One2many('sla.details', 'service_id', string='SLA Info')
     proof_of_purchase_avl = fields.Binary('Proof of Purchase Doc')
     war_latest_id = fields.Many2one('warranty.type', 'WAR/AMC Latest')
-    war_start_date = fields.Datetime('WAR/AMC Start Date')
-    war_end_date = fields.Datetime('WAR/AMC End Date')
+    war_start_date = fields.Date('WAR/AMC Start Date')
+    war_end_date = fields.Date('WAR/AMC End Date')
     service_gm = fields.Many2one('hr.employee', 'Service GM')
     service_rm = fields.Many2one('hr.employee', 'Service RM')
     engineer_id = fields.Many2one('hr.employee', 'Service Engineer')

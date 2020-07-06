@@ -72,7 +72,7 @@ class AmcDatabase(models.Model):
     partner_id_2 = fields.Many2one('res.partner', 'From Entity Name')
     partner_id_3 = fields.Many2one('res.partner', 'From Entity Name')
     location_id = fields.Many2one('stock.location', 'Warehouse')
-    to_entity_type = fields.Selection([('vendor', 'Vendor'), ('warehouse', 'Warehouse'), ('partner', 'Partner'), ('customer', 'Customer')], string="To Entity Type")
+    to_entity_type = fields.Selection([('vendor', 'Vendor'), ('warehouse', 'Warehouse'), ('partner', 'Partner'), ('customer', 'Customer')], default='customer', string="To Entity Type")
     to_partner_id_1 = fields.Many2one('res.partner', 'To Entity Name')
     to_partner_id_2 = fields.Many2one('res.partner', 'To Entity Name')
     to_partner_id_3 = fields.Many2one('res.partner', 'To Entity Name')
