@@ -9,3 +9,4 @@ class Respartner(models.Model):
     is_partner = fields.Boolean('Is Partner')
     partner_type_id = fields.Many2one('partner.type', 'Partner Type')
     customer_type = fields.Many2one('customer.type', 'Customer Type')
+    partner_location = fields.Many2one('stock.location', 'Partner Location')

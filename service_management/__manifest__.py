@@ -7,7 +7,7 @@
     Includes Features for service management
     """,
     'category': 'Sales',
-    'version': '1.1.8',
+    'version': '1.1.9',
     'depends': ['base', 'product', 'hr', 'stock', 'report_xlsx'],
     'data': [
         'data/ir_sequence_data.xml',

@@ -184,6 +184,25 @@ class ServiceOrder(models.Model):
             self.mobile = ''
             self.email = ''
             self.call_history_ids.unlink()
+            
+    def load_spares(self):
+        if self.partner_name_id:
+            location = self.partner_name_id.partner_location
+            if location:
+                quants = self.env['stock.quant'].search([('location_id','=', location.id)])
+                if quants:
+                    spares_list = []
+                    self.spares_details_ids.unlink()
+                    for quant in quants:
+                        spares_data = {
+                            'name': quant.product_id.name,
+                            'item_no': quant.product_id.default_code,
+                            'serial_no': quant.lot_id.name,
+                            'service_id' : self.id
+                            }
+                        spares_list.append((0,0, spares_data))
+                    self.spares_details_ids = spares_list
+                        
         
     @api.onchange('customer_id')
     def onchange_customer(self):
@@ -363,12 +382,10 @@ class ServiceOrder(models.Model):
                 purchase_db_list.append((0,0, purchas_data))
             self.sale_db_ids = purchase_db_list
             serial_wise_orders = self.env['service.order'].search([('serial_no', '=', self.serial_no), ('id', '!=', self.id)], order="id desc")
-            print ("serial_wise_orders",serial_wise_orders)
             if serial_wise_orders:
                 self.serial_history_ids.unlink()
                 serial_wise_data = []
                 for serial_wise_order in serial_wise_orders:
-                    print ("11111111")
                     serial_id = self.env['serial.no.master'].search([('name', '=', serial_wise_order.serial_no)], limit=1)
                     serial_history = {
                             'customer_id': serial_wise_order.customer_id and serial_wise_order.customer_id.id or False,

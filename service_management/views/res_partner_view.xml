@@ -10,6 +10,7 @@
             		<field name="customer_type"/>
             		<field name="is_partner"/>
             		<field name="partner_type_id" attrs="{'invisible': [('is_partner', '!=', True)]}"/>
+            		<field name="partner_location" attrs="{'invisible': [('is_partner', '!=', True)]}"/>
             	</field>
             </field>
         </record>

@@ -128,6 +128,7 @@
                     		</field>
                     	</page>
                     	<page string="Spares Info" name="spares_history">
+                    		<button name="load_spares" type="object" string="Load Spares Info"  class="btn-primary"/>
                     		<field name="spares_details_ids">
                     			<tree editable="bottom">
                     				<field name="item_no"  width="150px"/>
