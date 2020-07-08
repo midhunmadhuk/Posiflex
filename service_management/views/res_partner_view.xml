@@ -14,5 +14,28 @@
             	</field>
             </field>
         </record>
+        <record id="hr_service_view" model="ir.ui.view">
+            <field name="name">hr.employee.service.view.form</field>
+            <field name="model">hr.employee</field>
+            <field name="inherit_id" ref="hr.view_employee_form"/>
+            <field name="arch" type="xml">
+                <data>
+                	<xpath expr="//page[@name='hr_settings']" position="after">
+                		<page name="service_info" string="Service Info">
+                			<group>
+                				<group>
+                					<field name="is_branch"/>
+                					<field name="branch_location_id" attrs="{'invisible': [('is_branch', '!=', True)]}"/>
+                				</group>
+                				<group>
+                					<field name="is_service_engineer"/>
+                					<field name="engineer_location_id" attrs="{'invisible': [('is_service_engineer', '!=', True)]}"/>
+                				</group>
+                			</group>
+                		</page>
+                	</xpath>
+                </data>
+            </field>
+        </record>
 	</data>
 </odoo>

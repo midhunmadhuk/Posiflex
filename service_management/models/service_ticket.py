@@ -114,6 +114,189 @@ class ActivityDetails(models.Model):
     diagnostic_desc = fields.Char('Diagnostic Desc')
     user_type = fields.Many2one('res.groups', string='User Type')
     user_id = fields.Many2one('res.users', 'User Name')
+    location_filter_id = fields.Many2one('stock.location', 'Location')
+    serial_no_filter = fields.Many2one('stock.production.lot', 'Serial Number')
+    spare_detail_ids = fields.One2many('spares.detail.info', 'parent_id', 'Spares Info')
+    spare_used_ids = fields.One2many('spares.used', 'parent_id', 'Spares Used')
+    
+    
+    @api.onchange('location_filter_id','serial_no_filter')
+    def apply_filter(self):
+        if self.location_filter_id and self.serial_no_filter:
+            quants = self.env['stock.quant'].search([('location_id','=', self.location_filter_id.id), ('lot_id','=', self.serial_no_filter.id)])
+            self.spare_detail_ids.unlink()
+            if quants:
+                spares_list = []
+                for quant in quants:
+                    spares_data = {
+                        'name': quant.product_id.name,
+                        'item_no': quant.product_id.default_code,
+                        'serial_no': quant.lot_id.name,
+                        'product_id': quant.product_id.id,
+                        'parent_id' : self.id
+                        }
+                    spares_list.append((0,0, spares_data))
+                self.spare_detail_ids = spares_list
+                
+        elif self.serial_no_filter:
+            quants = self.env['stock.quant'].search([('lot_id','=', self.serial_no_filter.id)])
+            self.spare_detail_ids.unlink()
+            if quants:
+                spares_list = []
+                for quant in quants:
+                    spares_data = {
+                        'name': quant.product_id.name,
+                        'item_no': quant.product_id.default_code,
+                        'serial_no': quant.lot_id.name,
+                        'product_id': quant.product_id.id,
+                        'parent_id' : self.id
+                        }
+                    spares_list.append((0,0, spares_data))
+                self.spare_detail_ids = spares_list
+        
+        elif self.location_filter_id:
+            quants = self.env['stock.quant'].search([('location_id','=', self.location_filter_id.id)])
+            self.spare_detail_ids.unlink()
+            if quants:
+                spares_list = []
+                for quant in quants:
+                    spares_data = {
+                        'name': quant.product_id.name,
+                        'item_no': quant.product_id.default_code,
+                        'product_id': quant.product_id.id,
+                        'serial_no': quant.lot_id.name,
+                        'parent_id' : self.id
+                        }
+                    spares_list.append((0,0, spares_data))
+                self.spare_detail_ids = spares_list
+    
+    def consume_parts(self):
+        dest_loc = self.env['stock.location'].search([('usage', '=', 'customer')], limit=1)
+        if not dest_loc:
+            raise UserError(_('Customer Location Missing. Please configure'))
+        source_loc = self.location_filter_id.id
+        if not source_loc:
+            raise UserError(_('Source Location Missing.'))
+        if dest_loc:
+            move_list  = []
+            used_list = []
+            for parts_data in self.spare_detail_ids:
+                if parts_data.select == True:
+                    lot_id = self.env['stock.production.lot'].search([('name', '=', parts_data.serial_no)])
+                    if  lot_id:
+                        lot_id = lot_id.id
+                    else:
+                        lot_id = False
+                    move_data = {
+                        'name': self.service_id.name,
+                        'location_id': source_loc,
+                        'location_dest_id': dest_loc.id,
+                        'product_id': parts_data.product_id.id,
+                        'quantity_done': 1,
+                        'product_uom': parts_data.product_id.uom_id and parts_data.product_id.uom_id.id or  False,
+                        'product_uom_qty': 1,
+                        'lot_id': lot_id
+                        }
+                    move_list.append(move_data)
+                    used_data = {
+                        'name': parts_data.name,
+                        'item_no': parts_data.item_no,
+                        'serial_no': parts_data.serial_no,
+                        'parent_id' : self.id
+                        }
+                    used_list.append(used_data)
+            if not used_list:
+                raise UserError(_('Please select parts consumed!'))
+            if used_list:
+                spares_used = self.env['spares.used'].create(used_list)
+            if move_list:
+                moves = self.env['stock.move'].create(move_list)
+                for move in moves:
+                    move._action_confirm()
+                    move._action_assign()
+                    # This creates a stock.move.line record.
+                    # You could also do it manually using self.env['stock.move.line'].create({...})
+                    move.move_line_ids.write({'qty_done': 1, 'lot_id': move.lot_id and move.lot_id.id or False}) 
+                    move._action_done()
+        return True
+    
+    
+    def show_spare_used(self):
+        self.ensure_one()
+        view = self.env.ref('service_management.activity_spare_used_popup')
+        return {
+            'name': _('Spares Used'),
+            'type': 'ir.actions.act_window',
+            'view_type': 'form',
+            'view_mode': 'form',
+            'res_model': 'activity.details',
+            'views': [(view.id, 'form')],
+            'view_id': view.id,
+            'target': 'new',
+            'res_id': self.id,
+        }
+    
+    def show_spare_info(self):
+        self.ensure_one()
+        view = self.env.ref('service_management.activity_popup')
+        new_lines = []
+        location = False
+        self.spare_detail_ids.unlink()
+        if self.service_id.engineer_id:
+            location = self.service_id.engineer_id.engineer_location_id
+        elif self.service_id.service_gm:
+            location = self.service_id.engineer_id.branch_location_id
+        elif self.service_id.partner_name_id:
+            location = self.service_id.partner_name_id.partner_location
+        if location:
+            self.location_filter_id = location
+            quants = self.env['stock.quant'].search([('location_id','=', location.id)])
+            if quants:
+                spares_list = []
+                self.spare_detail_ids.unlink()
+                for quant in quants:
+                    spares_data = {
+                        'name': quant.product_id.name,
+                        'item_no': quant.product_id.default_code,
+                        'product_id': quant.product_id.id,
+                        'serial_no': quant.lot_id.name,
+                        'parent_id' : self.id
+                        }
+                    spares_list.append((0,0, spares_data))
+                self.spare_detail_ids = spares_list
+        return {
+            'name': _('Spares Info'),
+            'type': 'ir.actions.act_window',
+            'view_type': 'form',
+            'view_mode': 'form',
+            'res_model': 'activity.details',
+            'views': [(view.id, 'form')],
+            'view_id': view.id,
+            'target': 'new',
+            'res_id': self.id,
+        }
+    
+class SparesDetailInfo(models.Model):
+    _name = 'spares.detail.info'
+    
+    name = fields.Char('Description')
+    select = fields.Boolean()
+    item_no = fields.Char('Item No.')
+    product_id = fields.Many2one('product.product', 'Product')
+    serial_no = fields.Char('Serial No.')
+    billable = fields.Boolean('Billable')
+    war_in_months = fields.Float('Warranty In Months')
+    parent_id = fields.Many2one('activity.details', 'Parent')
+    
+class SparesUsed(models.Model):
+    _name = 'spares.used'
+    
+    name = fields.Char('Description')
+    item_no = fields.Char('Item No.')
+    serial_no = fields.Char('Serial No.')
+    billable = fields.Boolean('Billable')
+    war_in_months = fields.Float('Warranty In Months')
+    parent_id = fields.Many2one('activity.details', 'Parent')
     
 class SparesDetails(models.Model):
     _name = "spares.details"
@@ -146,7 +329,6 @@ class ServiceOrder(models.Model):
     @api.onchange('product_id')
     def onchage_product(self):
         self.product_no = self.product_id.default_code
-        
         
     def set_customer(self, customer):
         if customer:
@@ -186,22 +368,27 @@ class ServiceOrder(models.Model):
             self.call_history_ids.unlink()
             
     def load_spares(self):
+        location = False
+        if self.engineer_id:
+            location = self.engineer_location_id.partner_location
+        if self.service_gm:
+            location = self.branch_location_id.partner_location
         if self.partner_name_id:
             location = self.partner_name_id.partner_location
-            if location:
-                quants = self.env['stock.quant'].search([('location_id','=', location.id)])
-                if quants:
-                    spares_list = []
-                    self.spares_details_ids.unlink()
-                    for quant in quants:
-                        spares_data = {
-                            'name': quant.product_id.name,
-                            'item_no': quant.product_id.default_code,
-                            'serial_no': quant.lot_id.name,
-                            'service_id' : self.id
-                            }
-                        spares_list.append((0,0, spares_data))
-                    self.spares_details_ids = spares_list
+        if location:
+            quants = self.env['stock.quant'].search([('location_id','=', location.id)])
+            if quants:
+                spares_list = []
+                self.spares_details_ids.unlink()
+                for quant in quants:
+                    spares_data = {
+                        'name': quant.product_id.name,
+                        'item_no': quant.product_id.default_code,
+                        'serial_no': quant.lot_id.name,
+                        'service_id' : self.id
+                        }
+                    spares_list.append((0,0, spares_data))
+                self.spares_details_ids = spares_list
                         
         
     @api.onchange('customer_id')
@@ -452,7 +639,7 @@ class ServiceOrder(models.Model):
     war_latest_id = fields.Many2one('warranty.type', 'WAR/AMC Latest')
     war_start_date = fields.Date('WAR/AMC Start Date')
     war_end_date = fields.Date('WAR/AMC End Date')
-    service_gm = fields.Many2one('hr.employee', 'Service GM')
+    service_gm = fields.Many2one('hr.employee', 'Service Branch')
     service_rm = fields.Many2one('hr.employee', 'Service RM')
     engineer_id = fields.Many2one('hr.employee', 'Service Engineer')
     product_categ_id = fields.Many2one('product.category', 'Product Category')

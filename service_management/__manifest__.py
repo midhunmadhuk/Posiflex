@@ -7,7 +7,7 @@
     Includes Features for service management
     """,
     'category': 'Sales',
-    'version': '1.1.9',
+    'version': '1.1.10',
     'depends': ['base', 'product', 'hr', 'stock', 'report_xlsx'],
     'data': [
         'data/ir_sequence_data.xml',
@@ -16,7 +16,7 @@
         'views/service_report_excel_view.xml',
         'views/service_ticket_view.xml',
         'views/database_master_view.xml',
-        'wizard/call_summary_view.xml',
+#         'wizard/call_summary_view.xml',
         'views/service_configuration_view.xml',
         'views/res_partner_view.xml'
     ],

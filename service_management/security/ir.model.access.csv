@@ -25,3 +25,5 @@ access_serial_no_db_all,access_serial_no_db,model_serial_no_db,,1,1,1,1
 access_open_call_history_all,access_open_call_history,model_open_call_history,,1,1,1,1
 access_repeat_call_history_all,access_repeat_call_history,model_repeat_call_history,,1,1,1,1
 access_reopened_call_history_all,access_reopened_call_history,model_reopened_call_history,,1,1,1,1
+access_spares_detail_info,access_spares_detail_info,model_spares_detail_info,,1,1,1,1
+access_spares_used,access_spares_used,model_spares_used,,1,1,1,1

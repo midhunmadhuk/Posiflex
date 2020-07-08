@@ -124,6 +124,8 @@
                     				<field name="action_remarks"  width="300px"/>
                     				<field name="status_id"  width="200px"/>
                     				<field name="sub_status_id" domain="[('status_id','=', status_id)]"  width="200px"/>
+                    				<button name="show_spare_info" string="Show Spares" type="object" icon="fa-list"/>
+                    				<button name="show_spare_used" string="Show Spares Used" type="object" icon="fa-history"/>
                     			</tree>
                     		</field>
                     	</page>
@@ -250,6 +252,59 @@
             </pivot>
         </field>
    </record>
+   
+ 		<record id="activity_popup" model="ir.ui.view">
+          <field name="name">activity.details.popup.form</field>
+          <field name="model">activity.details</field>
+          <field name="arch" type="xml">
+              <form string="Spares Info">
+                  <sheet>
+                  		<group>
+                  			<group>
+                  				<field name="location_filter_id"/>
+                  			</group>
+                  			<group>
+                  				<field name="serial_no_filter"/>
+                  			</group>
+                  		</group>
+                       	<separator string="Spares Info"/>
+                       	<field name="spare_detail_ids">
+                            <tree editable="bottom">
+                           		<field name="select" nolabel="1"/>
+                           		<field name="item_no"  width="150px"/>
+                  				<field name="name"/>
+                  				<field name="serial_no" width="150px"/>
+                  				<field name="billable" width="150px"/>
+                  				<field name="war_in_months" width="200px"/>
+                            </tree>
+                        </field>
+                        <button name="consume_parts" string="Consume Spares" type="object" class="oe_highlight"/>
+                  </sheet>
+              </form>
+          </field>
+      </record>
+      
+      <record id="activity_spare_used_popup" model="ir.ui.view">
+          <field name="name">activity.details.popup.used.form</field>
+          <field name="model">activity.details</field>
+          <field name="arch" type="xml">
+              <form string="Spares Used">
+                  <sheet>
+                        <separator string="Spares Used"/>
+                        <field name="spare_used_ids">
+                        		<tree editable="bottom">
+                            	<field name="item_no"  width="150px"/>
+                  				<field name="name"/>
+                  				<field name="serial_no" width="150px"/>
+                  				<field name="billable" width="150px"/>
+                  				<field name="war_in_months" width="200px"/>
+                            </tree>
+                        </field>
+                  </sheet>
+              </form>
+          </field>
+      </record>
+   
 
    <!--  <record id="sms_sms_view_search" model="ir.ui.view">
         <field name="name">sms.sms.view.search</field>
