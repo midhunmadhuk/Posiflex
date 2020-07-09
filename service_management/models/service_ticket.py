@@ -96,7 +96,6 @@ class ActivityDetails(models.Model):
         users = self.user_type.users.ids
         return {'domain': {'user_id': [('id', 'in', users)]}}
     
-    
     name = fields.Many2one('activity.type','Activity Type')
     date = fields.Datetime('Activity Created Date')
     time = fields.Datetime(string='Activity Logged Date')
@@ -118,58 +117,34 @@ class ActivityDetails(models.Model):
     serial_no_filter = fields.Many2one('stock.production.lot', 'Serial Number')
     spare_detail_ids = fields.One2many('spares.detail.info', 'parent_id', 'Spares Info')
     spare_used_ids = fields.One2many('spares.used', 'parent_id', 'Spares Used')
+    product_filter = fields.Many2one('product.template', 'Product')
     
     
-    @api.onchange('location_filter_id','serial_no_filter')
+    @api.onchange('location_filter_id','serial_no_filter','product_filter')
     def apply_filter(self):
-        if self.location_filter_id and self.serial_no_filter:
-            quants = self.env['stock.quant'].search([('location_id','=', self.location_filter_id.id), ('lot_id','=', self.serial_no_filter.id)])
-            self.spare_detail_ids.unlink()
-            if quants:
-                spares_list = []
-                for quant in quants:
-                    spares_data = {
-                        'name': quant.product_id.name,
-                        'item_no': quant.product_id.default_code,
-                        'serial_no': quant.lot_id.name,
-                        'product_id': quant.product_id.id,
-                        'parent_id' : self.id
-                        }
-                    spares_list.append((0,0, spares_data))
-                self.spare_detail_ids = spares_list
+        domain = [('inventory_quantity','>',0)]
+        if self.location_filter_id:
+            domain += [('location_id','=', self.location_filter_id.id)]
+        if self.serial_no_filter:
+            domain += [('lot_id','=', self.serial_no_filter.id)]
+        if self.product_filter:
+            product_ids = self.env['product.product'].search([('parent_product','=', self.product_filter.id)])
+            domain += [('product_id','in', product_ids)]
+        quants = self.env['stock.quant'].search(domain)
+        self.spare_detail_ids.unlink()
+        if quants:
+            spares_list = []
+            for quant in quants:
+                spares_data = {
+                    'name': quant.product_id.name,
+                    'item_no': quant.product_id.default_code,
+                    'serial_no': quant.lot_id.name,
+                    'product_id': quant.product_id.id,
+                    'parent_id' : self.id
+                    }
+                spares_list.append((0,0, spares_data))
+            self.spare_detail_ids = spares_list
                 
-        elif self.serial_no_filter:
-            quants = self.env['stock.quant'].search([('lot_id','=', self.serial_no_filter.id)])
-            self.spare_detail_ids.unlink()
-            if quants:
-                spares_list = []
-                for quant in quants:
-                    spares_data = {
-                        'name': quant.product_id.name,
-                        'item_no': quant.product_id.default_code,
-                        'serial_no': quant.lot_id.name,
-                        'product_id': quant.product_id.id,
-                        'parent_id' : self.id
-                        }
-                    spares_list.append((0,0, spares_data))
-                self.spare_detail_ids = spares_list
-        
-        elif self.location_filter_id:
-            quants = self.env['stock.quant'].search([('location_id','=', self.location_filter_id.id)])
-            self.spare_detail_ids.unlink()
-            if quants:
-                spares_list = []
-                for quant in quants:
-                    spares_data = {
-                        'name': quant.product_id.name,
-                        'item_no': quant.product_id.default_code,
-                        'product_id': quant.product_id.id,
-                        'serial_no': quant.lot_id.name,
-                        'parent_id' : self.id
-                        }
-                    spares_list.append((0,0, spares_data))
-                self.spare_detail_ids = spares_list
-    
     def consume_parts(self):
         dest_loc = self.env['stock.location'].search([('usage', '=', 'customer')], limit=1)
         if not dest_loc:
@@ -214,8 +189,6 @@ class ActivityDetails(models.Model):
                 for move in moves:
                     move._action_confirm()
                     move._action_assign()
-                    # This creates a stock.move.line record.
-                    # You could also do it manually using self.env['stock.move.line'].create({...})
                     move.move_line_ids.write({'qty_done': 1, 'lot_id': move.lot_id and move.lot_id.id or False}) 
                     move._action_done()
         return True
@@ -250,10 +223,10 @@ class ActivityDetails(models.Model):
             location = self.service_id.partner_name_id.partner_location
         if location:
             self.location_filter_id = location
-            quants = self.env['stock.quant'].search([('location_id','=', location.id)])
+            quants = self.env['stock.quant'].search([('location_id','=', location.id), ('inventory_quantity','>',0)])
+            self.spare_detail_ids.unlink()
             if quants:
                 spares_list = []
-                self.spare_detail_ids.unlink()
                 for quant in quants:
                     spares_data = {
                         'name': quant.product_id.name,
@@ -370,13 +343,14 @@ class ServiceOrder(models.Model):
     def load_spares(self):
         location = False
         if self.engineer_id:
-            location = self.engineer_location_id.partner_location
+            location = self.service_gm.engineer_location_id
         if self.service_gm:
-            location = self.branch_location_id.partner_location
+            location = self.service_gm.branch_location_id
         if self.partner_name_id:
             location = self.partner_name_id.partner_location
         if location:
-            quants = self.env['stock.quant'].search([('location_id','=', location.id)])
+            self.spares_details_ids.unlink()
+            quants = self.env['stock.quant'].search([('location_id','=', location.id), ('inventory_quantity','>',0)])
             if quants:
                 spares_list = []
                 self.spares_details_ids.unlink()
